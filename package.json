@@ -1,0 +1,17 @@
+{
+  "name": "xian-js",
+  "version": "1.0.0",
+  "description": "javascript tools for interacting with the xian blockchain.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "duelingbenjos",
+  "license": "MIT",
+  "dependencies": {
+    "axios": "^1.6.7",
+    "buffer": "^6.0.3",
+    "install": "^0.13.0",
+    "npm": "^10.4.0"
+  }
+}
