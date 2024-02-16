@@ -1,25 +1,26 @@
-
 import axios from "axios";
-import { decodeInt, decodeObj, stringifyTransaction } from "./helpers";
+import { decodeInt, decodeObj, decodeQuery, decodeStr, stringifyTransaction } from "./helpers";
 import { I_BroadcastTxResult, I_NetworkSettings, I_SendTxResult, I_Transaction } from "../types";
+import { Encoder } from "./encoder";
 
 export class MasternodeAPI {
 	hosts: string[];
 
-	constructor(networkInfoObj: I_NetworkSettings) {
-		if (typeof networkInfoObj !== "object" || Object.keys(networkInfoObj).length === 0)
-			throw new Error(`Expected Object and got Type: ${typeof networkInfoObj}`);
-		if (!Array.isArray(networkInfoObj.masternode_hosts) || networkInfoObj.masternode_hosts.length === 0)
+	constructor(network_settings: I_NetworkSettings) {
+		if (typeof network_settings !== "object" || Object.keys(network_settings).length === 0)
+			throw new Error(`Expected Object and got Type: ${typeof network_settings}`);
+		if (!Array.isArray(network_settings.masternode_hosts) || network_settings.masternode_hosts.length === 0)
 			throw new Error(`HOSTS Required (Type: Array)`);
-		this.hosts = this.validateHosts(networkInfoObj.masternode_hosts);
+		this.hosts = this.validateHosts(network_settings.masternode_hosts);
 	}
+
 	validateProtocol(host: string) {
 		let protocols = ["https://", "http://"];
 		if (protocols.map((protocol) => host.includes(protocol)).includes(true)) return host;
 		throw new Error("Host String must include http:// or https://");
 	}
 
-	validateHosts(hosts) {
+	validateHosts(hosts: string[]) {
 		return hosts.map((host) => this.validateProtocol(host.toLowerCase()));
 	}
 
@@ -31,82 +32,50 @@ export class MasternodeAPI {
 		return this.host;
 	}
 
-	// async getContractInfo(contractName) {
-	// 	const returnInfo = (res) => {
-	// 		try {
-	// 			if (res.name) return res;
-	// 		} catch (e) {}
-	// 		return { error: `${contractName} does not exist` };
-	// 	};
-	// 	let path = `/contracts/${contractName}`;
-	// 	return this.send("GET", path, {}, undefined, (res, err) => returnInfo(res)).then((res) => returnInfo(res));
-	// }
+	async getContractInfo(contractName: string) {
+		const { data } = await axios.post(`${this.host}/abci_query?path="/contract/${contractName}"`);
+		console.log({ data: data.result.response });
+		return decodeQuery(data.result.response);
+	}
 
-	// async getVariable(contract, variable, key = "") {
-	// 	let parms = {};
-	// 	if (validateTypes.isStringWithValue(key)) parms.key = key;
+	async getVariable(contract: string, variable: string) {
+		let path = `/get/${contract}.${variable}/`;
+		const url = `${this.host}/abci_query?path="${path}"`;
+		const { data } = await axios.post(url);
+		const result = data.result.response;
+		let decoded = decodeQuery(result);
+		return decoded;
+	}
 
-	// 	let path = `/contracts/${contract}/${variable}/`;
+	async getContractMethods(contractName) {
+		const { data } = await axios.post(`${this.host}/abci_query?path="/contract_methods/${contractName}"`);
+		console.log({ data: data.result.response });
+		return JSON.parse(decodeQuery(data.result.response) as string);
+	}
 
-	// 	const returnValue = (res) => {
-	// 		try {
-	// 			if (res.value) return res.value;
-	// 		} catch (e) {}
-	// 		return null;
-	// 	};
-	// 	return this.send("GET", path, { parms }, undefined, (res, err) => returnValue(res)).then((res) => returnValue(res));
-	// }
+	async getContractVariables(contractName) {
+		const { data } = await axios.post(`${this.host}/abci_query?path="/contract_vars/${contractName}"`);
+		console.log({ data: data.result.response });
+		return JSON.parse(decodeQuery(data.result.response) as string);
+	}
 
-	// async getContractMethods(contract) {
-	// 	const getMethods = (res) => {
-	// 		try {
-	// 			if (res.methods) return res.methods;
-	// 		} catch (e) {}
-	// 		return [];
-	// 	};
-	// 	let path = `/contracts/${contract}/methods`;
-	// 	return this.send("GET", path, {}, undefined, (res, err) => getMethods(res)).then((res) => getMethods(res));
-	// }
+	async pingServer() {
+		const { data } = await axios.post(`${this.host}/abci_query?path="/ping/"`);
+		return JSON.parse(decodeQuery(data.result.response) as string);
+	}
 
-	// async getContractVariables(contract) {
-	// 	const getVariables = (res) => {
-	// 		try {
-	// 			if (res.variables) return res;
-	// 		} catch (e) {}
-	// 		return {};
-	// 	};
-	// 	let path = `/contracts/${contract}/variables`;
-	// 	return this.send("GET", path, {}, undefined, (res, err) => getVariables(res)).then((res) => getVariables(res));
-	// }
+	async getCurrencyBalance(vk: string) {
+		let balanceRes = await this.getVariable("currency", `balances:${vk}`);
+		if (!balanceRes) return Encoder("bigNumber", 0);
+		if (balanceRes) return Encoder("bigNumber", balanceRes);
+		return Encoder("bigNumber", balanceRes.toString());
+	}
 
-	// async pingServer() {
-	// 	const getStatus = (res) => {
-	// 		try {
-	// 			if (res.status) return true;
-	// 		} catch (e) {}
-	// 		return false;
-	// 	};
-	// 	let response = await this.send("GET", "/ping", {}, undefined, (res, err) => getStatus(res));
-	// 	return getStatus(response);
-	// }
-
-	// async getCurrencyBalance(vk) {
-	// 	let balanceRes = await this.getVariable("currency", "balances", vk);
-	// 	if (!balanceRes) return Encoder("bigNumber", 0);
-	// 	if (balanceRes.__fixed__) return Encoder("bigNumber", balanceRes.__fixed__);
-	// 	return Encoder("bigNumber", balanceRes.toString());
-	// }
-
-	// async contractExists(contractName) {
-	// 	const exists = (res) => {
-	// 		try {
-	// 			if (res.name) return true;
-	// 		} catch (e) {}
-	// 		return false;
-	// 	};
-	// 	let path = `/contracts/${contractName}`;
-	// 	return this.send("GET", path, {}, undefined, (res, err) => exists(res)).then((res) => exists(res));
-	// }
+	async contractExists(contractName) {
+		const contract = await this.getContractInfo(contractName);
+		if (contract) return true;
+		return false;
+	}
 
 	async broadcastTx(tx: I_Transaction): Promise<I_SendTxResult> {
 		const txString = stringifyTransaction(tx);

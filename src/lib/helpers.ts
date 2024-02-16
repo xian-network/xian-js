@@ -1,6 +1,6 @@
 import nodeCryptoJs from "node-cryptojs-aes";
 const { CryptoJS, JsonFormatter } = nodeCryptoJs;
-import { I_Payload, I_PayloadSorted, I_Transaction } from "../types";
+import { I_Payload, I_PayloadSorted, I_Transaction, T_QueryResponseDataType } from "../types";
 
 /**
  * Encrypt a Javascript object with a string password
@@ -154,6 +154,28 @@ export function decodeInt(encodedInt) {
 	return value;
 }
 
+export function decodeQuery(response: any) {
+	let value: number | string | null;
+	let type: T_QueryResponseDataType = response.info;
+	if (type === "int") {
+		value = parseInt(Buffer.from(response.value, "base64").toString());
+	} else if (type === "decimal") {
+		value = parseFloat(Buffer.from(response.value, "base64").toString());
+	} else if (type === "str") {
+		value = Buffer.from(response.value, "base64").toString();
+	} else {
+		value = null;
+	}
+
+	return value;
+}
+
+export function decodeStr(encodedStr) {
+	let decodedBytes = Buffer.from(encodedStr, "base64");
+	let value = decodedBytes.toString();
+	return value;
+}
+
 export function decodeObj(encodedObj: string) {
 	let decodedBytes = Buffer.from(encodedObj, "base64");
 	let value = JSON.parse(decodedBytes.toString());
@@ -225,7 +247,6 @@ export function makeTransaction(signature: string, sortedPayload: I_PayloadSorte
 }
 
 export function verifySignature(payload: I_PayloadSorted, wallet, signature: string) {
-	//Verify the signature is correct
 	const stringBuffer = Buffer.from(payload.jsonData);
 	const stringArray = new Uint8Array(stringBuffer);
 	return wallet.verify(this.sender, stringArray, this.signature);

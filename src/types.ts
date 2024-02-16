@@ -94,3 +94,5 @@ export interface I_Transaction {
 	};
 	payload: I_Payload;
 }
+
+export type T_QueryResponseDataType = "str" | "int" | "decimal"
