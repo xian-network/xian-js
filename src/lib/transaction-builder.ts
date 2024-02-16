@@ -21,9 +21,7 @@ export class TransactionBuilder {
 	sortedPayload: I_PayloadSorted;
 	masternodeApi: MasternodeAPI;
 
-	constructor(networkSettings: I_NetworkSettings, txInfo: I_TxInfo, txData?: any) {
-		console.log({ networkInfo: networkSettings, txInfo, txData });
-
+	constructor(networkSettings: I_NetworkSettings, txInfo: I_TxInfo) {
 		/**
 		 * Validate Data
 		 */
@@ -80,12 +78,10 @@ export class TransactionBuilder {
 				this.payload.nonce = await this.masternodeApi.getNonce(this.sender);
 			}
 			this.sortedPayload = makePayload(this.payload);
-
 			// Sign the transaction
 			const signature = this.sign(sk, this.sortedPayload);
 			//Serialize transaction
 			const tx = makeTransaction(signature, this.sortedPayload);
-			// console.log({tx})
 			//Send transaction to the masternode
 			let response = await this.masternodeApi.broadcastTx(tx);
 			return response;
