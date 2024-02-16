@@ -34,7 +34,6 @@ export class MasternodeAPI {
 
 	async getContractInfo(contractName: string) {
 		const { data } = await axios.post(`${this.host}/abci_query?path="/contract/${contractName}"`);
-		console.log({ data: data.result.response });
 		return decodeQuery(data.result.response);
 	}
 
@@ -49,13 +48,11 @@ export class MasternodeAPI {
 
 	async getContractMethods(contractName) {
 		const { data } = await axios.post(`${this.host}/abci_query?path="/contract_methods/${contractName}"`);
-		console.log({ data: data.result.response });
 		return JSON.parse(decodeQuery(data.result.response) as string);
 	}
 
 	async getContractVariables(contractName) {
 		const { data } = await axios.post(`${this.host}/abci_query?path="/contract_vars/${contractName}"`);
-		console.log({ data: data.result.response });
 		return JSON.parse(decodeQuery(data.result.response) as string);
 	}
 
