@@ -27,9 +27,19 @@ async function main() {
 		},
 		stampLimit: 50000 // Max stamps to be used. Could use less, won't use more.
 	};
-	const transaction = new TransactionBuilder(network_info, tx_info);
-	const send_res = await transaction.send(sk);
-	console.log({ send_res });
+	// const send_res = await transaction.send(sk);
+	// console.log({ send_res });
+	function recurseSend(i = 10000, finishTx = 10100) {
+		tx_info.nonce = i + 1;
+		const transaction = new TransactionBuilder(network_info, tx_info);
+		const send_res = transaction.send(sk);
+		setTimeout(() => {
+			if (i < finishTx) {
+				recurseSend(i + 1, finishTx);
+			}
+		},10);
+	}
+    recurseSend();
 }
 
 main();
