@@ -13,14 +13,12 @@ Run scripts
 
 For javascript projects, the library is compiled to the `/dist` folder. _<**Not yet tested.>**_
 <br>
-# Install from npm<
+### Install from npm
 
-_Available on npm soon._<br>
-`~npm install xian-js~`
-
+_Available on npm soon._<br> <br>
+- `npm install xian-js`
 or
-
-`~const Xian = require("xian-js")~`
+- `~const Xian = require("xian-js")~`
 
 ### Wallet Functions
 
