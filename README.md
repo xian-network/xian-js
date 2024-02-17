@@ -12,10 +12,10 @@ Run scripts
 - `npx ts-node src/examples/<any-script>`
 
 For javascript projects, the library is compiled to the `/dist` folder. _<**Not yet tested.>**_
+<br>
+# Install from npm<
 
-Install from npm
-
-_Available on npm soon._
+_Available on npm soon._<br>
 `~npm install xian-js~`
 
 or
