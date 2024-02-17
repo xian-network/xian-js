@@ -16,7 +16,7 @@ For javascript projects, the library is compiled to the `/dist` folder. _<**Not 
 ### Install from npm
 
 _Available on npm soon._<br> <br>
-- `npm install xian-js`<br><br>
+- `npm install xian-js`<br>
 or<br>
 - `~const Xian = require("xian-js")~`
 
