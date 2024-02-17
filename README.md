@@ -17,8 +17,9 @@ npx ts-node src/examples/<any-script>
 For javascript projects, the library is compiled to the `/dist` folder. _<**Not yet tested.>**_
 
 
-// This will be the most straight-forward way once this is uploaded to npm as a package.
 
+### Install from npm
+_Available on npm soon._
 ~~npm install xian-js~~
 
 // or
