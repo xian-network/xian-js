@@ -16,11 +16,11 @@ For javascript projects, the library is compiled to the `/dist` folder. _<**Not 
 Install from npm
 
 _Available on npm soon._
-`~~npm install xian-js~~`
+`~npm install xian-js~`
 
 or
 
-`~~const Xian = require("xian-js")~~`
+`~const Xian = require("xian-js")~`
 
 ### Wallet Functions
 
