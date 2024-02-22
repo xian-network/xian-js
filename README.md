@@ -1,14 +1,29 @@
 # xian-js
 ## Tools for interacting with the Xian blockchain
 
+### Notes
+- This is an early version
+- Not tested yet in the browser, but should work fine.
+- Compiled JS in `/dist` hasn't been tested yet.
+
 ### Installation
-```typescript
-npm install xian-js
+Clone this repository & install dependencies
 
-// or
 
-const Xian = require("xian-js")
-```
+- `git clone https://github.com/XianChain/xian-js.git`
+- `npm install`
+
+Run scripts
+- `npx ts-node src/examples/<any-script>`
+
+For javascript projects, the library is compiled to the `/dist` folder. _<**Not yet tested.>**_
+<br>
+### Install from npm
+
+_Available on npm soon._<br>
+- `npm install xian-js`<br>
+or<br>
+- `const Xian = require("xian-js")`
 
 ### Wallet Functions
 
