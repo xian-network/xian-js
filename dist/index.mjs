@@ -1,9 +1,5 @@
-var __create = Object.create;
 var __defProp = Object.defineProperty;
-var __getOwnPropDesc = Object.getOwnPropertyDescriptor;
-var __getOwnPropNames = Object.getOwnPropertyNames;
 var __getOwnPropSymbols = Object.getOwnPropertySymbols;
-var __getProtoOf = Object.getPrototypeOf;
 var __hasOwnProp = Object.prototype.hasOwnProperty;
 var __propIsEnum = Object.prototype.propertyIsEnumerable;
 var __defNormalProp = (obj, key, value) => key in obj ? __defProp(obj, key, { enumerable: true, configurable: true, writable: true, value }) : obj[key] = value;
@@ -22,23 +18,6 @@ var __export = (target, all) => {
   for (var name in all)
     __defProp(target, name, { get: all[name], enumerable: true });
 };
-var __copyProps = (to, from, except, desc) => {
-  if (from && typeof from === "object" || typeof from === "function") {
-    for (let key of __getOwnPropNames(from))
-      if (!__hasOwnProp.call(to, key) && key !== except)
-        __defProp(to, key, { get: () => from[key], enumerable: !(desc = __getOwnPropDesc(from, key)) || desc.enumerable });
-  }
-  return to;
-};
-var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__getProtoOf(mod)) : {}, __copyProps(
-  // If the importer is in node compatibility mode or this is not an ESM
-  // file that has been converted to a CommonJS file using a Babel-
-  // compatible transform (i.e. "__esModule" has not been set), then set
-  // "default" to the CommonJS "module.exports" for node compatibility.
-  isNodeMode || !mod || !mod.__esModule ? __defProp(target, "default", { value: mod, enumerable: true }) : target,
-  mod
-));
-var __toCommonJS = (mod) => __copyProps(__defProp({}, "__esModule", { value: true }), mod);
 var __async = (__this, __arguments, generator) => {
   return new Promise((resolve, reject) => {
     var fulfilled = (value) => {
@@ -59,13 +38,6 @@ var __async = (__this, __arguments, generator) => {
     step((generator = generator.apply(__this, __arguments)).next());
   });
 };
-
-// src/index.ts
-var src_exports = {};
-__export(src_exports, {
-  default: () => src_default
-});
-module.exports = __toCommonJS(src_exports);
 
 // src/lib/wallet.ts
 var wallet_exports = {};
@@ -111,8 +83,8 @@ __export(helpers_exports, {
   stringifyTransaction: () => stringifyTransaction,
   verifySignature: () => verifySignature
 });
-var import_node_cryptojs_aes = __toESM(require("node-cryptojs-aes"));
-var { CryptoJS, JsonFormatter } = import_node_cryptojs_aes.default;
+import nodeCryptoJs from "node-cryptojs-aes";
+var { CryptoJS, JsonFormatter } = nodeCryptoJs;
 function encryptObject(password, obj) {
   if (typeof password !== "string" || password === "") {
     throw new Error("Password must be a non-empty string");
@@ -320,9 +292,9 @@ function verifySignature(payload, wallet, signature) {
 var stringifyTransaction = (tx) => Buffer.from(JSON.stringify(tx)).toString("hex");
 
 // src/lib/wallet.ts
-var import_tweetnacl = __toESM(require("tweetnacl"));
-var bip39 = __toESM(require("bip39"));
-var import_ed25519_hd_key = __toESM(require("ed25519-hd-key"));
+import nacl from "tweetnacl";
+import * as bip39 from "bip39";
+import bip32 from "ed25519-hd-key";
 var create_wallet = (args = {}) => {
   let { sk, keepPrivate, seed } = args;
   let vk;
@@ -346,9 +318,9 @@ var create_wallet = (args = {}) => {
 function generate_keys(seed = null) {
   var kp = null;
   if (seed == null) {
-    kp = import_tweetnacl.default.sign.keyPair();
+    kp = nacl.sign.keyPair();
   } else {
-    kp = import_tweetnacl.default.sign.keyPair.fromSeed(seed);
+    kp = nacl.sign.keyPair.fromSeed(seed);
   }
   return {
     sk: new Uint8Array(kp["secretKey"].slice(0, 32)),
@@ -385,9 +357,9 @@ function generate_keys_bip39(seed = void 0, derivationIndex = 0) {
     finalSeed = bip39.mnemonicToSeedSync(finalMnemonic).toString("hex");
   }
   const derivationPath = "m/44'/789'/" + derivationIndex + "'/0'/0'";
-  const { key, chainCode } = import_ed25519_hd_key.default.derivePath(derivationPath, finalSeed, 2147483648);
+  const { key, chainCode } = bip32.derivePath(derivationPath, finalSeed, 2147483648);
   const privateKey = key.toString("hex");
-  const publicKey = import_ed25519_hd_key.default.getPublicKey(key, false).toString("hex");
+  const publicKey = bip32.getPublicKey(key, false).toString("hex");
   if (publicKey !== get_vk(privateKey)) {
     throw Error("Bip32 public key does not match with Lamden public key!");
   }
@@ -407,7 +379,7 @@ function new_wallet_bip39(seed = void 0, derivationIndex = 0) {
 function sign(sk, msg) {
   var kp = format_to_keys(sk);
   var jsnacl_sk = concatUint8Arrays(kp.sk, kp.vk);
-  return buf2hex(import_tweetnacl.default.sign.detached(msg, jsnacl_sk));
+  return buf2hex(nacl.sign.detached(msg, jsnacl_sk));
 }
 function verify(vk, msg, sig) {
   var vkb = hex2buf(vk);
@@ -416,7 +388,7 @@ function verify(vk, msg, sig) {
   if (Object.prototype.toString.call(msgb) === "[object String]")
     msgb = str2buf(msg);
   try {
-    return import_tweetnacl.default.sign.detached.verify(msgb, sigb, vkb);
+    return nacl.sign.detached.verify(msgb, sigb, vkb);
   } catch (_a) {
     return false;
   }
@@ -426,12 +398,12 @@ function validateMnemonic2(mnemonic, wordList) {
 }
 
 // src/lib/masternode-api.ts
-var import_axios = __toESM(require("axios"));
+import axios from "axios";
 
 // src/lib/encoder.ts
-var import_bignumber = __toESM(require("bignumber.js"));
-import_bignumber.default.config({ RANGE: [-30, 30], EXPONENTIAL_AT: 1e9 });
-import_bignumber.default.set({ DECIMAL_PLACES: 30, ROUNDING_MODE: import_bignumber.default.ROUND_DOWN });
+import BigNumber from "bignumber.js";
+BigNumber.config({ RANGE: [-30, 30], EXPONENTIAL_AT: 1e9 });
+BigNumber.set({ DECIMAL_PLACES: 30, ROUNDING_MODE: BigNumber.ROUND_DOWN });
 function Encoder(type, value) {
   const throwError = (val) => {
     throw new Error(`Error encoding ${val} to ${type}`);
@@ -478,24 +450,24 @@ function Encoder(type, value) {
   const encodeFloat = (val) => {
     if (!isNumber(val))
       throwError(val);
-    if (!import_bignumber.default.isBigNumber(val))
-      val = new import_bignumber.default(val);
+    if (!BigNumber.isBigNumber(val))
+      val = new BigNumber(val);
     return { __fixed__: val.toFixed(30).replace(/^0+(\d)|(\d)0+$/gm, "$1$2") };
   };
   const encodeNumber = (val) => {
     if (!isNumber(val))
       throwError(val);
     if (isFloat(val)) {
-      if (!import_bignumber.default.isBigNumber(val))
-        val = new import_bignumber.default(val);
+      if (!BigNumber.isBigNumber(val))
+        val = new BigNumber(val);
       return { __fixed__: val.toFixed(30).replace(/^0+(\d)|(\d)0+$/gm, "$1$2") };
     }
     if (isInteger(val))
       return parseInt(val);
   };
   const encodeBigNumber = (val) => {
-    if (!import_bignumber.default.isBigNumber(val))
-      val = new import_bignumber.default(val);
+    if (!BigNumber.isBigNumber(val))
+      val = new BigNumber(val);
     return val;
   };
   const encodeBool = (val) => {
@@ -621,7 +593,7 @@ function Encoder(type, value) {
   else
     throw new Error(`Error: ${type} is not a valid encoder type.`);
 }
-Encoder.BigNumber = import_bignumber.default;
+Encoder.BigNumber = BigNumber;
 
 // src/lib/masternode-api.ts
 var MasternodeAPI = class {
@@ -649,7 +621,7 @@ var MasternodeAPI = class {
   }
   getContractInfo(contractName) {
     return __async(this, null, function* () {
-      const { data } = yield import_axios.default.post(`${this.host}/abci_query?path="/contract/${contractName}"`);
+      const { data } = yield axios.post(`${this.host}/abci_query?path="/contract/${contractName}"`);
       return decodeQuery(data.result.response);
     });
   }
@@ -657,7 +629,7 @@ var MasternodeAPI = class {
     return __async(this, null, function* () {
       let path = `/get/${contract}.${variable}/`;
       const url = `${this.host}/abci_query?path="${path}"`;
-      const { data } = yield import_axios.default.post(url);
+      const { data } = yield axios.post(url);
       const result = data.result.response;
       let decoded = decodeQuery(result);
       return decoded;
@@ -665,19 +637,19 @@ var MasternodeAPI = class {
   }
   getContractMethods(contractName) {
     return __async(this, null, function* () {
-      const { data } = yield import_axios.default.post(`${this.host}/abci_query?path="/contract_methods/${contractName}"`);
+      const { data } = yield axios.post(`${this.host}/abci_query?path="/contract_methods/${contractName}"`);
       return JSON.parse(decodeQuery(data.result.response));
     });
   }
   getContractVariables(contractName) {
     return __async(this, null, function* () {
-      const { data } = yield import_axios.default.post(`${this.host}/abci_query?path="/contract_vars/${contractName}"`);
+      const { data } = yield axios.post(`${this.host}/abci_query?path="/contract_vars/${contractName}"`);
       return JSON.parse(decodeQuery(data.result.response));
     });
   }
   pingServer() {
     return __async(this, null, function* () {
-      const { data } = yield import_axios.default.post(`${this.host}/abci_query?path="/ping/"`);
+      const { data } = yield axios.post(`${this.host}/abci_query?path="/ping/"`);
       return JSON.parse(decodeQuery(data.result.response));
     });
   }
@@ -703,7 +675,7 @@ var MasternodeAPI = class {
     return __async(this, null, function* () {
       const txString = stringifyTransaction(tx);
       const url = `${this.host}/broadcast_tx_commit?tx="${txString}"`;
-      const { data } = yield import_axios.default.get(url);
+      const { data } = yield axios.get(url);
       const { check_tx, deliver_tx, hash } = data.result;
       const result_data = deliver_tx.data ? decodeObj(deliver_tx.data) : null;
       const check = check_tx.code === 0;
@@ -715,7 +687,7 @@ var MasternodeAPI = class {
     return __async(this, null, function* () {
       const path = `/abci_query?path="/get_next_nonce/${vk}"`;
       const url = `${this.host}${path}`;
-      const { data } = yield import_axios.default.post(url);
+      const { data } = yield axios.post(url);
       const value = data.result.response.value;
       if (value === "AA==")
         return 0;
@@ -724,14 +696,14 @@ var MasternodeAPI = class {
     });
   }
   getTransaction(hash) {
-    return import_axios.default.get(`${this.host}/tx?hash="0x${hash}"`);
+    return axios.get(`${this.host}/tx?hash="0x${hash}"`);
   }
   getNodeInfo() {
-    return import_axios.default.get(`${this.host}/status`);
+    return axios.get(`${this.host}/status`);
   }
   getLastetBlock() {
     return __async(this, null, function* () {
-      return import_axios.default.get(`${this.host}/block`);
+      return axios.get(`${this.host}/block`);
     });
   }
 };
@@ -1047,8 +1019,8 @@ var Keystore = class {
 };
 
 // src/index.ts
-var import_buffer = require("buffer");
-globalThis.Buffer = import_buffer.Buffer;
+import { Buffer as Buffer2 } from "buffer";
+globalThis.Buffer = Buffer2;
 var src_default = {
   TransactionBuilder,
   MasternodeAPI,
@@ -1057,4 +1029,7 @@ var src_default = {
   Encoder,
   Utils: helpers_exports
 };
-//# sourceMappingURL=index.js.map
+export {
+  src_default as default
+};
+//# sourceMappingURL=index.mjs.map
