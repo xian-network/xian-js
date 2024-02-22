@@ -12,7 +12,14 @@
     "axios": "^1.6.7",
     "buffer": "^6.0.3",
     "install": "^0.13.0",
-    "npm": "^10.4.0"
+    "npm": "^10.4.0",
+    "bignumber.js": "^9.0.0",
+    "bip39": "^3.0.4",
+    "ed25519-hd-key": "^1.2.0",
+    "node-cryptojs-aes": "^0.4.0",
+    "node-fetch": "^2.6.1",
+    "tweetnacl": "1.0.1",
+    "socket.io-client": "^4.6.1"
   },
   "devDependencies": {
     "ts-node": "^10.9.2"
