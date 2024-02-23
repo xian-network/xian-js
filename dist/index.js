@@ -63,7 +63,12 @@ var __async = (__this, __arguments, generator) => {
 // src/index.ts
 var src_exports = {};
 __export(src_exports, {
-  default: () => src_default
+  Encoder: () => Encoder,
+  Keystore: () => Keystore,
+  MasternodeAPI: () => MasternodeAPI,
+  TransactionBuilder: () => TransactionBuilder,
+  Utils: () => helpers_exports,
+  Wallet: () => wallet_exports
 });
 module.exports = __toCommonJS(src_exports);
 
@@ -1049,12 +1054,13 @@ var Keystore = class {
 // src/index.ts
 var import_buffer = require("buffer");
 globalThis.Buffer = import_buffer.Buffer;
-var src_default = {
-  TransactionBuilder,
-  MasternodeAPI,
-  Wallet: wallet_exports,
-  Keystore,
+// Annotate the CommonJS export names for ESM import in node:
+0 && (module.exports = {
   Encoder,
-  Utils: helpers_exports
-};
+  Keystore,
+  MasternodeAPI,
+  TransactionBuilder,
+  Utils,
+  Wallet
+});
 //# sourceMappingURL=index.js.map

@@ -1021,15 +1021,12 @@ var Keystore = class {
 // src/index.ts
 import { Buffer as Buffer2 } from "buffer";
 globalThis.Buffer = Buffer2;
-var src_default = {
-  TransactionBuilder,
-  MasternodeAPI,
-  Wallet: wallet_exports,
-  Keystore,
-  Encoder,
-  Utils: helpers_exports
-};
 export {
-  src_default as default
+  Encoder,
+  Keystore,
+  MasternodeAPI,
+  TransactionBuilder,
+  helpers_exports as Utils,
+  wallet_exports as Wallet
 };
 //# sourceMappingURL=index.mjs.map

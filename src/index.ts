@@ -8,7 +8,7 @@ import { Buffer } from "buffer";
 
 globalThis.Buffer = Buffer;
 
-export default {
+export {
 	TransactionBuilder,
 	MasternodeAPI,
 	Wallet,

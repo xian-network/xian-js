@@ -322,18 +322,18 @@ declare function verify(vk: any, msg: any, sig: any): boolean;
  */
 declare function validateMnemonic(mnemonic: any, wordList: any): boolean;
 
-declare const Wallet_create_wallet: typeof create_wallet;
-declare const Wallet_format_to_keys: typeof format_to_keys;
-declare const Wallet_generate_keys: typeof generate_keys;
-declare const Wallet_get_vk: typeof get_vk;
-declare const Wallet_keys_to_format: typeof keys_to_format;
-declare const Wallet_new_wallet: typeof new_wallet;
-declare const Wallet_new_wallet_bip39: typeof new_wallet_bip39;
-declare const Wallet_sign: typeof sign;
-declare const Wallet_validateMnemonic: typeof validateMnemonic;
-declare const Wallet_verify: typeof verify;
-declare namespace Wallet {
-  export { Wallet_create_wallet as create_wallet, Wallet_format_to_keys as format_to_keys, Wallet_generate_keys as generate_keys, Wallet_get_vk as get_vk, Wallet_keys_to_format as keys_to_format, Wallet_new_wallet as new_wallet, Wallet_new_wallet_bip39 as new_wallet_bip39, Wallet_sign as sign, Wallet_validateMnemonic as validateMnemonic, Wallet_verify as verify };
+declare const wallet_create_wallet: typeof create_wallet;
+declare const wallet_format_to_keys: typeof format_to_keys;
+declare const wallet_generate_keys: typeof generate_keys;
+declare const wallet_get_vk: typeof get_vk;
+declare const wallet_keys_to_format: typeof keys_to_format;
+declare const wallet_new_wallet: typeof new_wallet;
+declare const wallet_new_wallet_bip39: typeof new_wallet_bip39;
+declare const wallet_sign: typeof sign;
+declare const wallet_validateMnemonic: typeof validateMnemonic;
+declare const wallet_verify: typeof verify;
+declare namespace wallet {
+  export { wallet_create_wallet as create_wallet, wallet_format_to_keys as format_to_keys, wallet_generate_keys as generate_keys, wallet_get_vk as get_vk, wallet_keys_to_format as keys_to_format, wallet_new_wallet as new_wallet, wallet_new_wallet_bip39 as new_wallet_bip39, wallet_sign as sign, wallet_validateMnemonic as validateMnemonic, wallet_verify as verify };
 }
 
 /**
@@ -391,42 +391,33 @@ declare function makeTransaction(signature: string, sortedPayload: I_PayloadSort
 declare function verifySignature(payload: I_PayloadSorted, wallet: any, signature: string): any;
 declare const stringifyTransaction: (tx: object) => string;
 
-declare const Utils_ab2str: typeof ab2str;
-declare const Utils_buf2hex: typeof buf2hex;
-declare const Utils_concatUint8Arrays: typeof concatUint8Arrays;
-declare const Utils_decodeInt: typeof decodeInt;
-declare const Utils_decodeObj: typeof decodeObj;
-declare const Utils_decodeQuery: typeof decodeQuery;
-declare const Utils_decodeStr: typeof decodeStr;
-declare const Utils_decryptObject: typeof decryptObject;
-declare const Utils_decryptStrHash: typeof decryptStrHash;
-declare const Utils_encryptObject: typeof encryptObject;
-declare const Utils_encryptStrHash: typeof encryptStrHash;
-declare const Utils_hex2buf: typeof hex2buf;
-declare const Utils_hex2str: typeof hex2str;
-declare const Utils_isLamdenKey: typeof isLamdenKey;
-declare const Utils_isStringHex: typeof isStringHex;
-declare const Utils_makePayload: typeof makePayload;
-declare const Utils_makeTransaction: typeof makeTransaction;
-declare const Utils_randomString: typeof randomString;
-declare const Utils_sortObjKeys: typeof sortObjKeys;
-declare const Utils_sortObject: typeof sortObject;
-declare const Utils_str2ab: typeof str2ab;
-declare const Utils_str2buf: typeof str2buf;
-declare const Utils_str2hex: typeof str2hex;
-declare const Utils_stringifyTransaction: typeof stringifyTransaction;
-declare const Utils_verifySignature: typeof verifySignature;
-declare namespace Utils {
-  export { Utils_ab2str as ab2str, Utils_buf2hex as buf2hex, Utils_concatUint8Arrays as concatUint8Arrays, Utils_decodeInt as decodeInt, Utils_decodeObj as decodeObj, Utils_decodeQuery as decodeQuery, Utils_decodeStr as decodeStr, Utils_decryptObject as decryptObject, Utils_decryptStrHash as decryptStrHash, Utils_encryptObject as encryptObject, Utils_encryptStrHash as encryptStrHash, Utils_hex2buf as hex2buf, Utils_hex2str as hex2str, Utils_isLamdenKey as isLamdenKey, Utils_isStringHex as isStringHex, Utils_makePayload as makePayload, Utils_makeTransaction as makeTransaction, Utils_randomString as randomString, Utils_sortObjKeys as sortObjKeys, Utils_sortObject as sortObject, Utils_str2ab as str2ab, Utils_str2buf as str2buf, Utils_str2hex as str2hex, Utils_stringifyTransaction as stringifyTransaction, Utils_verifySignature as verifySignature };
+declare const helpers_ab2str: typeof ab2str;
+declare const helpers_buf2hex: typeof buf2hex;
+declare const helpers_concatUint8Arrays: typeof concatUint8Arrays;
+declare const helpers_decodeInt: typeof decodeInt;
+declare const helpers_decodeObj: typeof decodeObj;
+declare const helpers_decodeQuery: typeof decodeQuery;
+declare const helpers_decodeStr: typeof decodeStr;
+declare const helpers_decryptObject: typeof decryptObject;
+declare const helpers_decryptStrHash: typeof decryptStrHash;
+declare const helpers_encryptObject: typeof encryptObject;
+declare const helpers_encryptStrHash: typeof encryptStrHash;
+declare const helpers_hex2buf: typeof hex2buf;
+declare const helpers_hex2str: typeof hex2str;
+declare const helpers_isLamdenKey: typeof isLamdenKey;
+declare const helpers_isStringHex: typeof isStringHex;
+declare const helpers_makePayload: typeof makePayload;
+declare const helpers_makeTransaction: typeof makeTransaction;
+declare const helpers_randomString: typeof randomString;
+declare const helpers_sortObjKeys: typeof sortObjKeys;
+declare const helpers_sortObject: typeof sortObject;
+declare const helpers_str2ab: typeof str2ab;
+declare const helpers_str2buf: typeof str2buf;
+declare const helpers_str2hex: typeof str2hex;
+declare const helpers_stringifyTransaction: typeof stringifyTransaction;
+declare const helpers_verifySignature: typeof verifySignature;
+declare namespace helpers {
+  export { helpers_ab2str as ab2str, helpers_buf2hex as buf2hex, helpers_concatUint8Arrays as concatUint8Arrays, helpers_decodeInt as decodeInt, helpers_decodeObj as decodeObj, helpers_decodeQuery as decodeQuery, helpers_decodeStr as decodeStr, helpers_decryptObject as decryptObject, helpers_decryptStrHash as decryptStrHash, helpers_encryptObject as encryptObject, helpers_encryptStrHash as encryptStrHash, helpers_hex2buf as hex2buf, helpers_hex2str as hex2str, helpers_isLamdenKey as isLamdenKey, helpers_isStringHex as isStringHex, helpers_makePayload as makePayload, helpers_makeTransaction as makeTransaction, helpers_randomString as randomString, helpers_sortObjKeys as sortObjKeys, helpers_sortObject as sortObject, helpers_str2ab as str2ab, helpers_str2buf as str2buf, helpers_str2hex as str2hex, helpers_stringifyTransaction as stringifyTransaction, helpers_verifySignature as verifySignature };
 }
 
-declare const _default: {
-    TransactionBuilder: typeof TransactionBuilder;
-    MasternodeAPI: typeof MasternodeAPI;
-    Wallet: typeof Wallet;
-    Keystore: typeof Keystore;
-    Encoder: typeof Encoder;
-    Utils: typeof Utils;
-};
-
-export { _default as default };
+export { Encoder, Keystore, MasternodeAPI, TransactionBuilder, helpers as Utils, wallet as Wallet };
