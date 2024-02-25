@@ -283,8 +283,8 @@ declare function new_wallet(seed?: any): {
  *      mnemonic:           Bip39 24 words mnemonic
  */
 declare function new_wallet_bip39(seed?: any, derivationIndex?: number): {
-    sk: string;
-    vk: string;
+    sk: any;
+    vk: any;
     derivationIndex: number;
     seed: any;
     mnemonic: any;

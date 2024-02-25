@@ -327,7 +327,7 @@ var stringifyTransaction = (tx) => Buffer.from(JSON.stringify(tx)).toString("hex
 // src/lib/wallet.ts
 var import_tweetnacl = __toESM(require("tweetnacl"));
 var bip39 = __toESM(require("bip39"));
-var import_ed25519_hd_key = __toESM(require("ed25519-hd-key"));
+var import_hdkey = require("ed25519-keygen/hdkey");
 var create_wallet = (args = {}) => {
   let { sk, keepPrivate, seed } = args;
   let vk;
@@ -389,10 +389,11 @@ function generate_keys_bip39(seed = void 0, derivationIndex = 0) {
     finalMnemonic = bip39.generateMnemonic(256);
     finalSeed = bip39.mnemonicToSeedSync(finalMnemonic).toString("hex");
   }
+  let hdkey = import_hdkey.HDKey.fromMasterSeed(finalSeed);
   const derivationPath = "m/44'/789'/" + derivationIndex + "'/0'/0'";
-  const { key, chainCode } = import_ed25519_hd_key.default.derivePath(derivationPath, finalSeed, 2147483648);
-  const privateKey = key.toString("hex");
-  const publicKey = import_ed25519_hd_key.default.getPublicKey(key, false).toString("hex");
+  hdkey = hdkey.derive(derivationPath);
+  const privateKey = buf2hex(hdkey.privateKey);
+  const publicKey = buf2hex(hdkey.publicKey).slice(2);
   if (publicKey !== get_vk(privateKey)) {
     throw Error("Bip32 public key does not match with Lamden public key!");
   }
