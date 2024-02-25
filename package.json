@@ -28,6 +28,7 @@
     "tweetnacl": "1.0.1"
   },
   "devDependencies": {
+    "prettier": "3.2.5",
     "ts-node": "^10.9.2",
     "tsup": "^8.0.2"
   }
