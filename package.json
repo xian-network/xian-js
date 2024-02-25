@@ -20,6 +20,7 @@
     "bip39": "^3.0.4",
     "buffer": "^6.0.3",
     "ed25519-hd-key": "^1.2.0",
+    "ed25519-keygen": "^0.4.11",
     "install": "^0.13.0",
     "node-cryptojs-aes": "^0.4.0",
     "node-fetch": "^2.6.1",
