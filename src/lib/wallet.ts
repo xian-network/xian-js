@@ -1,7 +1,7 @@
 import * as helpers from "./helpers";
 import nacl from "tweetnacl";
 import * as bip39 from "bip39";
-import bip32 from "ed25519-hd-key";
+import { HDKey } from "ed25519-keygen/hdkey";
 
 /**
  * Create a wallet object for signing and verifying messages
@@ -140,15 +140,11 @@ function generate_keys_bip39(seed = undefined, derivationIndex = 0) {
     finalSeed = bip39.mnemonicToSeedSync(finalMnemonic).toString("hex");
   }
 
+  let hdkey = HDKey.fromMasterSeed(finalSeed);
   const derivationPath = "m/44'/789'/" + derivationIndex + "'/0'/0'";
-  const { key, chainCode } = bip32.derivePath(
-    derivationPath,
-    finalSeed,
-    0x80000000,
-  );
-
-  const privateKey = key.toString("hex");
-  const publicKey = bip32.getPublicKey(key, false).toString("hex");
+  hdkey = hdkey.derive(derivationPath);
+  const privateKey = helpers.buf2hex(hdkey.privateKey);
+  const publicKey = helpers.buf2hex(hdkey.publicKey).slice(2);
 
   if (publicKey !== get_vk(privateKey)) {
     throw Error("Bip32 public key does not match with Lamden public key!");
