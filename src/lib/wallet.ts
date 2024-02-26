@@ -141,10 +141,10 @@ function generate_keys_bip39(seed = undefined, derivationIndex = 0) {
 	}
 
 	let hdkey = HDKey.fromMasterSeed(finalSeed);
-    const derivationPath = "m/44'/789'/" + derivationIndex + "'/0'/0'";
-    hdkey = hdkey.derive(derivationPath);
-    const privateKey = helpers.buf2hex(hdkey.privateKey);
-    const publicKey = helpers.buf2hex(hdkey.publicKey).slice(2);
+	const derivationPath = "m/44'/789'/" + derivationIndex + "'/0'/0'";
+	hdkey = hdkey.derive(derivationPath);
+	const privateKey = helpers.buf2hex(hdkey.privateKey);
+	const publicKey = helpers.buf2hex(hdkey.publicKey).slice(2);
 
 	if (publicKey !== get_vk(privateKey)) {
 		throw Error("Bip32 public key does not match with Lamden public key!");
