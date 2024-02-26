@@ -13,27 +13,27 @@ import { HDKey } from "ed25519-keygen/hdkey";
  * @return {Object} Wallet Object with sign and verify methods
  */
 export let create_wallet = (args: any = {}) => {
-  let { sk, keepPrivate, seed } = args;
-  let vk;
+	let { sk, keepPrivate, seed } = args;
+	let vk;
 
-  if (sk) {
-    vk = get_vk(sk);
-  } else {
-    let keyPair = new_wallet(seed);
-    vk = keyPair.vk;
-    sk = keyPair.sk;
-  }
+	if (sk) {
+		vk = get_vk(sk);
+	} else {
+		let keyPair = new_wallet(seed);
+		vk = keyPair.vk;
+		sk = keyPair.sk;
+	}
 
-  const wallet = () => {
-    return {
-      sign: (msg) => sign(sk, msg),
-      verify: (msg, sig) => verify(vk, msg, sig),
-      vk,
-      sk: !keepPrivate ? sk : undefined,
-    };
-  };
+	const wallet = () => {
+		return {
+			sign: (msg) => sign(sk, msg),
+			verify: (msg, sig) => verify(vk, msg, sig),
+			vk,
+			sk: !keepPrivate ? sk : undefined
+		};
+	};
 
-  return wallet();
+	return wallet();
 };
 
 /**
@@ -46,22 +46,22 @@ export let create_wallet = (args: any = {}) => {
  *      vk:     Verify Key (VK) represents a 32 byte verify key
  */
 export function generate_keys(seed = null) {
-  var kp = null;
-  if (seed == null) {
-    kp = nacl.sign.keyPair();
-  } else {
-    kp = nacl.sign.keyPair.fromSeed(seed);
-  }
-  // In the JS implementation of the NaCL library the sk is the first 32 bytes of the secretKey
-  // and the vk is the last 32 bytes of the secretKey as well as the publicKey
-  // {
-  //   'publicKey': <vk>,
-  //   'secretKey': <sk><vk>
-  // }
-  return {
-    sk: new Uint8Array(kp["secretKey"].slice(0, 32)),
-    vk: new Uint8Array(kp["secretKey"].slice(32, 64)),
-  };
+	var kp = null;
+	if (seed == null) {
+		kp = nacl.sign.keyPair();
+	} else {
+		kp = nacl.sign.keyPair.fromSeed(seed);
+	}
+	// In the JS implementation of the NaCL library the sk is the first 32 bytes of the secretKey
+	// and the vk is the last 32 bytes of the secretKey as well as the publicKey
+	// {
+	//   'publicKey': <vk>,
+	//   'secretKey': <sk><vk>
+	// }
+	return {
+		sk: new Uint8Array(kp["secretKey"].slice(0, 32)),
+		vk: new Uint8Array(kp["secretKey"].slice(32, 64))
+	};
 }
 /**
  * @param String sk
@@ -71,9 +71,9 @@ export function generate_keys(seed = null) {
  *      vk:     A 64 character long hex representation of a verify key (public key)
  */
 export function get_vk(sk) {
-  var kp = format_to_keys(sk);
-  var kpf = keys_to_format(kp);
-  return kpf.vk;
+	var kp = format_to_keys(sk);
+	var kpf = keys_to_format(kp);
+	return kpf.vk;
 }
 /**
  * @param String sk
@@ -84,9 +84,9 @@ export function get_vk(sk) {
  *      vk:     Verify Key (VK) represents a 32 byte verify key
  */
 export function format_to_keys(sk) {
-  var skf = helpers.hex2buf(sk);
-  var kp = generate_keys(skf);
-  return kp;
+	var skf = helpers.hex2buf(sk);
+	var kp = generate_keys(skf);
+	return kp;
 }
 /**
  * @param Object kp
@@ -99,10 +99,10 @@ export function format_to_keys(sk) {
  *      vk:     Verify Key (VK) represented as a 64 character hex string
  */
 export function keys_to_format(kp) {
-  return {
-    vk: helpers.buf2hex(kp.vk),
-    sk: helpers.buf2hex(kp.sk),
-  };
+	return {
+		vk: helpers.buf2hex(kp.vk),
+		sk: helpers.buf2hex(kp.sk)
+	};
 }
 /**
  * @param Uint8Array(length: 32) seed
@@ -114,8 +114,8 @@ export function keys_to_format(kp) {
  *      vk:     Verify Key (VK) represented as a 64 character hex string
  */
 export function new_wallet(seed = null) {
-  const keys = generate_keys(seed);
-  return keys_to_format(keys);
+	const keys = generate_keys(seed);
+	return keys_to_format(keys);
 }
 
 /**
@@ -130,36 +130,36 @@ export function new_wallet(seed = null) {
  *      mnemonic:           Bip39 24 words mnemonic
  */
 function generate_keys_bip39(seed = undefined, derivationIndex = 0) {
-  let finalSeed;
-  let finalMnemonic;
+	let finalSeed;
+	let finalMnemonic;
 
-  if (seed !== undefined) {
-    finalSeed = seed;
-  } else {
-    finalMnemonic = bip39.generateMnemonic(256);
-    finalSeed = bip39.mnemonicToSeedSync(finalMnemonic).toString("hex");
-  }
+	if (seed !== undefined) {
+		finalSeed = seed;
+	} else {
+		finalMnemonic = bip39.generateMnemonic(256);
+		finalSeed = bip39.mnemonicToSeedSync(finalMnemonic).toString("hex");
+	}
 
-  let hdkey = HDKey.fromMasterSeed(finalSeed);
-  const derivationPath = "m/44'/789'/" + derivationIndex + "'/0'/0'";
-  hdkey = hdkey.derive(derivationPath);
-  const privateKey = helpers.buf2hex(hdkey.privateKey);
-  const publicKey = helpers.buf2hex(hdkey.publicKey).slice(2);
+	let hdkey = HDKey.fromMasterSeed(finalSeed);
+    const derivationPath = "m/44'/789'/" + derivationIndex + "'/0'/0'";
+    hdkey = hdkey.derive(derivationPath);
+    const privateKey = helpers.buf2hex(hdkey.privateKey);
+    const publicKey = helpers.buf2hex(hdkey.publicKey).slice(2);
 
-  if (publicKey !== get_vk(privateKey)) {
-    throw Error("Bip32 public key does not match with Lamden public key!");
-  }
+	if (publicKey !== get_vk(privateKey)) {
+		throw Error("Bip32 public key does not match with Lamden public key!");
+	}
 
-  if (finalMnemonic !== undefined) {
-  }
+	if (finalMnemonic !== undefined) {
+	}
 
-  return {
-    sk: privateKey,
-    vk: publicKey,
-    derivationIndex: derivationIndex,
-    seed: seed !== undefined ? null : finalSeed,
-    mnemonic: seed !== undefined ? null : finalMnemonic,
-  };
+	return {
+		sk: privateKey,
+		vk: publicKey,
+		derivationIndex: derivationIndex,
+		seed: seed !== undefined ? null : finalSeed,
+		mnemonic: seed !== undefined ? null : finalMnemonic
+	};
 }
 
 /**
@@ -174,7 +174,7 @@ function generate_keys_bip39(seed = undefined, derivationIndex = 0) {
  *      mnemonic:           Bip39 24 words mnemonic
  */
 export function new_wallet_bip39(seed = undefined, derivationIndex = 0) {
-  return generate_keys_bip39(seed, derivationIndex);
+	return generate_keys_bip39(seed, derivationIndex);
 }
 
 /**
@@ -187,14 +187,14 @@ export function new_wallet_bip39(seed = undefined, derivationIndex = 0) {
  *      sig:    A 128 character long hex string representing the message's signature
  */
 export function sign(sk: string, msg: Uint8Array): string {
-  var kp = format_to_keys(sk);
-  // This is required due to the secretKey required to sign a transaction
-  // in the js implementation of NaCL being the combination of the sk and
-  // vk for some stupid reason. That being said, we still want the sk and
-  // vk objects to exist in 32-byte string format (same as cilantro's
-  // python implementation) when presented to the user.
-  var jsnacl_sk = helpers.concatUint8Arrays(kp.sk, kp.vk);
-  return helpers.buf2hex(nacl.sign.detached(msg, jsnacl_sk));
+	var kp = format_to_keys(sk);
+	// This is required due to the secretKey required to sign a transaction
+	// in the js implementation of NaCL being the combination of the sk and
+	// vk for some stupid reason. That being said, we still want the sk and
+	// vk objects to exist in 32-byte string format (same as cilantro's
+	// python implementation) when presented to the user.
+	var jsnacl_sk = helpers.concatUint8Arrays(kp.sk, kp.vk);
+	return helpers.buf2hex(nacl.sign.detached(msg, jsnacl_sk));
 }
 /**
  * @param String vk
@@ -208,19 +208,18 @@ export function sign(sk: string, msg: Uint8Array): string {
  *      result: true if verify checked out, false if not
  */
 export function verify(vk, msg, sig) {
-  var vkb = helpers.hex2buf(vk);
-  var sigb = helpers.hex2buf(sig);
-  var msgb = msg;
+	var vkb = helpers.hex2buf(vk);
+	var sigb = helpers.hex2buf(sig);
+	var msgb = msg;
 
-  // Convert string messages to Uint8Array
-  if (Object.prototype.toString.call(msgb) === "[object String]")
-    msgb = helpers.str2buf(msg);
+	// Convert string messages to Uint8Array
+	if (Object.prototype.toString.call(msgb) === "[object String]") msgb = helpers.str2buf(msg);
 
-  try {
-    return nacl.sign.detached.verify(msgb, sigb, vkb);
-  } catch (_a) {
-    return false;
-  }
+	try {
+		return nacl.sign.detached.verify(msgb, sigb, vkb);
+	} catch (_a) {
+		return false;
+	}
 }
 /**
  * @param string mnemonic
@@ -232,5 +231,5 @@ export function verify(vk, msg, sig) {
  *      res: A boolen value
  */
 export function validateMnemonic(mnemonic, wordList) {
-  return bip39.validateMnemonic(mnemonic, wordList);
+	return bip39.validateMnemonic(mnemonic, wordList);
 }
