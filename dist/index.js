@@ -169,7 +169,10 @@ function decryptStrHash(password, encryptedString) {
   }
 }
 function buf2hex(buffer) {
-  return Array.prototype.map.call(new Uint8Array(buffer), (x) => ("00" + x.toString(16)).slice(-2)).join("");
+  const uint8Array = new Uint8Array(buffer);
+  const hexArray = Array.prototype.map.call(uint8Array, (x) => ("00" + x.toString(16)).slice(-2));
+  const hexString = hexArray.join("");
+  return hexString;
 }
 function hex2buf(hexString) {
   var bytes = new Uint8Array(Math.ceil(hexString.length / 2));
