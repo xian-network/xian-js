@@ -87,9 +87,13 @@ export function decryptStrHash(password, encryptedString) {
 		return false;
 	}
 }
-
-export function buf2hex(buffer) {
-	return Array.prototype.map.call(new Uint8Array(buffer), (x) => ("00" + x.toString(16)).slice(-2)).join("");
+ 
+export function buf2hex(buffer : ArrayBuffer) {
+	// return Array.prototype.map.call(new Uint8Array(buffer), (x) => ("00" + x.toString(16)).slice(-2)).join("");
+    const uint8Array: Uint8Array = new Uint8Array(buffer);
+    const hexArray: string[] = Array.prototype.map.call(uint8Array, (x: number) => ("00" + x.toString(16)).slice(-2));
+    const hexString: string = hexArray.join("");
+    return hexString
 }
 export function hex2buf(hexString) {
 	var bytes = new Uint8Array(Math.ceil(hexString.length / 2));

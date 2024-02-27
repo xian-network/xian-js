@@ -136,7 +136,10 @@ function decryptStrHash(password, encryptedString) {
   }
 }
 function buf2hex(buffer) {
-  return Array.prototype.map.call(new Uint8Array(buffer), (x) => ("00" + x.toString(16)).slice(-2)).join("");
+  const uint8Array = new Uint8Array(buffer);
+  const hexArray = Array.prototype.map.call(uint8Array, (x) => ("00" + x.toString(16)).slice(-2));
+  const hexString = hexArray.join("");
+  return hexString;
 }
 function hex2buf(hexString) {
   var bytes = new Uint8Array(Math.ceil(hexString.length / 2));
@@ -294,7 +297,7 @@ var stringifyTransaction = (tx) => Buffer.from(JSON.stringify(tx)).toString("hex
 // src/lib/wallet.ts
 import nacl from "tweetnacl";
 import * as bip39 from "bip39";
-import bip32 from "ed25519-hd-key";
+import { HDKey } from "ed25519-keygen/hdkey";
 var create_wallet = (args = {}) => {
   let { sk, keepPrivate, seed } = args;
   let vk;
@@ -356,10 +359,11 @@ function generate_keys_bip39(seed = void 0, derivationIndex = 0) {
     finalMnemonic = bip39.generateMnemonic(256);
     finalSeed = bip39.mnemonicToSeedSync(finalMnemonic).toString("hex");
   }
+  let hdkey = HDKey.fromMasterSeed(finalSeed);
   const derivationPath = "m/44'/789'/" + derivationIndex + "'/0'/0'";
-  const { key, chainCode } = bip32.derivePath(derivationPath, finalSeed, 2147483648);
-  const privateKey = key.toString("hex");
-  const publicKey = bip32.getPublicKey(key, false).toString("hex");
+  hdkey = hdkey.derive(derivationPath);
+  const privateKey = buf2hex(hdkey.privateKey);
+  const publicKey = buf2hex(hdkey.publicKey).slice(2);
   if (publicKey !== get_vk(privateKey)) {
     throw Error("Bip32 public key does not match with Lamden public key!");
   }

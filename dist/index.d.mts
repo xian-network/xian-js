@@ -231,7 +231,7 @@ declare function generate_keys(seed?: any): {
  * @return String vk
  *      vk:     A 64 character long hex representation of a verify key (public key)
  */
-declare function get_vk(sk: any): any;
+declare function get_vk(sk: any): string;
 /**
  * @param String sk
  *      sk:     A 64 character long hex representation of a signing key (private key)
@@ -255,8 +255,8 @@ declare function format_to_keys(sk: any): {
  *      vk:     Verify Key (VK) represented as a 64 character hex string
  */
 declare function keys_to_format(kp: any): {
-    vk: any;
-    sk: any;
+    vk: string;
+    sk: string;
 };
 /**
  * @param Uint8Array(length: 32) seed
@@ -268,8 +268,8 @@ declare function keys_to_format(kp: any): {
  *      vk:     Verify Key (VK) represented as a 64 character hex string
  */
 declare function new_wallet(seed?: any): {
-    vk: any;
-    sk: any;
+    vk: string;
+    sk: string;
 };
 /**
  * @param seed Bip39 seed phrase (128 characters in hex)
@@ -369,7 +369,7 @@ declare function encryptStrHash(password: any, string: any): any;
  * @return {string} Decrypted string
  */
 declare function decryptStrHash(password: any, encryptedString: any): any;
-declare function buf2hex(buffer: any): any;
+declare function buf2hex(buffer: ArrayBuffer): string;
 declare function hex2buf(hexString: any): Uint8Array;
 declare function str2buf(string: any): Uint8Array;
 declare function concatUint8Arrays(array1: any, array2: any): Uint8Array;
