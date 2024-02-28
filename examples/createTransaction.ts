@@ -1,6 +1,6 @@
-import { TransactionBuilder } from "../lib/transaction-builder";
-import { create_wallet, new_wallet } from "../lib/wallet";
-import type { I_NetworkSettings, I_TxInfo } from "../types";
+import { TransactionBuilder } from "../src/lib/transaction-builder";
+import { create_wallet, new_wallet } from "../src/lib/wallet";
+import type { I_NetworkSettings, I_TxInfo } from "../src/types";
 
 async function main() {
 	const wallet = create_wallet({ sk: "cd6cc45ffe7cebf09c6c6025575d50bb42c6c70c07e1dbc5150aaadc98705c2b" });

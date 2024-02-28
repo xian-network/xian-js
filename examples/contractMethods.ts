@@ -1,5 +1,5 @@
-import { MasternodeAPI } from "../lib/masternode-api";
-import { I_NetworkSettings } from "../types";
+import { MasternodeAPI } from "../src/lib/masternode-api";
+import { I_NetworkSettings } from "../src/types";
 
 async function main() {
 	let network_info: I_NetworkSettings = {
@@ -10,8 +10,8 @@ async function main() {
 
 	const masternode_api = new MasternodeAPI(network_info);
 
-	const contract = await masternode_api.getContractInfo("currency");
-	console.log({ contract });
+	const methods = await masternode_api.getContractMethods("currency");
+	console.log({methods})
 }
 
 main();

@@ -1,5 +1,5 @@
-import { MasternodeAPI } from "../lib/masternode-api";
-import { I_NetworkSettings } from "../types";
+import { MasternodeAPI } from "../src/lib/masternode-api";
+import { I_NetworkSettings } from "../src/types";
 
 async function main() {
 	let network_info: I_NetworkSettings = {
