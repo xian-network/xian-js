@@ -1,10 +1,15 @@
 {
   "name": "xian-js",
-  "version": "0.0.3",
-  "description": "javascript tools for interacting with the xian blockchain.",
+  "version": "0.0.18",
+  "description": "javascript tools for interacting with the Xian blockchain.",
+  "types": "./dist/index.d.ts",
   "main": "./dist/index.js",
   "module": "./dist/index.mjs",
-  "types": "./dist/index.d.ts",
+  "type": "module",
+  "exports": {
+    ".": "./dist/index.js",
+    "./lib/transaction-builder": "./dist/lib/transaction-builder.js"
+  },
   "files": [
     "dist"
   ],
@@ -30,6 +35,7 @@
   "devDependencies": {
     "prettier": "3.2.5",
     "ts-node": "^10.9.2",
-    "tsup": "^8.0.2"
+    "tsup": "^8.0.2",
+    "typescript": "^5.3.3"
   }
 }
