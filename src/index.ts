@@ -16,3 +16,12 @@ export {
 	Encoder,
 	Utils
 };
+
+export default {
+	TransactionBuilder,
+	MasternodeAPI,
+	Wallet,
+	Keystore,
+	Encoder,
+	Utils
+};
