@@ -1,29 +1,9 @@
 # xian-js
 ## Tools for interacting with the Xian blockchain
 
-### Notes
-- This is an early version
-- Not tested yet in the browser, but should work fine.
-- Compiled JS in `/dist` hasn't been tested yet.
-
 ### Installation
-Clone this repository & install dependencies
 
-
-- `git clone https://github.com/XianChain/xian-js.git`
-- `npm install`
-
-Run scripts
-- `npx ts-node src/examples/<any-script>`
-
-For javascript projects, the library is compiled to the `/dist` folder. _<**Not yet tested.>**_
-<br>
-### Install from npm
-
-_Available on npm soon._<br>
-- `npm install xian-js`<br>
-or<br>
-- `const Xian = require("xian-js")`
+`npm install xian-js`
 
 ### Wallet Functions
 
@@ -33,9 +13,9 @@ or<br>
 import Xian from "xian-js"
 
 // Create a new wallet
-const wallet = Xian.wallet.new_wallet()
+const new_wallet = Xian.Wallet.new_wallet()
 
-console.log(wallet)
+console.log(new_wallet)
 
 >>  {
         vk: "ea2cee33f9478d767d67afe345592ef36446ee04f8d588fa76942e6569a53298",
@@ -49,9 +29,9 @@ console.log(wallet)
 - **BIP32** = derivation path
 
 ```javascript
-let wallet = Xian.wallet.new_wallet_bip39()
+let new_wallet_bip39 = Xian.Wallet.new_wallet_bip39()
 
-console.log(wallet)
+console.log(new_wallet_bip39)
 >> {
        sk: 'a6b72cb3d1160c26f9f39a8f1d4a3c7c0da2ac59d193b66ac5f919ec77f28915',
        vk: '53d016586ce35c5f6ea581cadf4693dd2850621dfad6a2261e8dd311c83e11d5',
@@ -69,7 +49,7 @@ console.log(wallet)
 ```javascript
 const seed = '3626c59ee5bce833a8bf5024645eb10415b39c6f9fd0ff0fb1b00b8ca9fd6ff4b8a0ed7077296cdaff1b955f03318f244dfd3fead404d93f11a3f301c0e3e1c6'
 const derivationIndex = 0;
-let wallet = Xian.wallet.new_wallet_bip39(seed, derivationIndex)
+let wallet = Xian.Wallet.new_wallet_bip39(seed, derivationIndex)
 
 console.log(wallet)
 >> {
