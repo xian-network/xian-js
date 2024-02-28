@@ -5,6 +5,7 @@ import { MasternodeAPI } from "./lib/masternode-api";
 import * as Wallet from "./lib/wallet";
 import * as Utils from "./lib/helpers";
 import { Buffer } from "buffer";
+import { I_NetworkSettings, T_NetworkType, I_TxInfo, I_BroadcastTxResult, I_CheckTx, I_DeliverTx } from "./types";
 
 globalThis.Buffer = Buffer;
 
@@ -14,7 +15,13 @@ export {
 	Wallet,
 	Keystore,
 	Encoder,
-	Utils
+	Utils,
+	I_NetworkSettings,
+	T_NetworkType,
+	I_TxInfo,
+	I_BroadcastTxResult,
+	I_CheckTx,
+	I_DeliverTx
 };
 
 export default {
