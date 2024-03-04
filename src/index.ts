@@ -15,14 +15,17 @@ export {
 	Wallet,
 	Keystore,
 	Encoder,
-	Utils,
+	Utils
+};
+
+export type {
 	I_NetworkSettings,
 	T_NetworkType,
 	I_TxInfo,
 	I_BroadcastTxResult,
 	I_CheckTx,
 	I_DeliverTx
-};
+}
 
 export default {
 	TransactionBuilder,

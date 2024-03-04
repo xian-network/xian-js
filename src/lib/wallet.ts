@@ -1,7 +1,7 @@
 import * as helpers from "./helpers";
 import nacl from "tweetnacl";
 import * as bip39 from "bip39";
-import { HDKey } from "ed25519-keygen/hdkey";
+import { HDKey } from 'micro-ed25519-hdkey';
 
 /**
  * Create a wallet object for signing and verifying messages

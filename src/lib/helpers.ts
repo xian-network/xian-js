@@ -152,10 +152,9 @@ export function isLamdenKey(string) {
 	return false;
 }
 
-export function decodeInt(encodedInt) {
-	let decodedBytes = Buffer.from(encodedInt, "base64");
-	let value = decodedBytes.readInt32BE(0);
-	return value;
+export function decodeInt(encodedInt: string) {
+	let decodedInt = parseInt(Buffer.from(encodedInt, "base64").toString());
+	return decodedInt;
 }
 
 export function decodeQuery(response: any) {

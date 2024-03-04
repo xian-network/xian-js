@@ -1,23 +1,22 @@
-import { TransactionBuilder } from "../src/lib/transaction-builder";
-import { create_wallet, new_wallet } from "../src/lib/wallet";
-import type { I_NetworkSettings, I_TxInfo } from "../src/types";
+import { TransactionBuilder, Wallet } from "xian-js";
+import type { I_NetworkSettings, I_TxInfo } from "xian-js";
 
 async function main() {
-	const wallet = create_wallet({ sk: "cd6cc45ffe7cebf09c6c6025575d50bb42c6c70c07e1dbc5150aaadc98705c2b" });
+	const new_wallet = Wallet.create_wallet({ sk: "cd6cc45ffe7cebf09c6c6025575d50bb42c6c70c07e1dbc5150aaadc98705c2b" });
 
-	const sk = wallet.sk;
-	const vk = wallet.vk;
+	const sk = new_wallet.sk;
+	const vk = new_wallet.vk;
 
 	console.log({ sk, vk });
 
 	let network_info: I_NetworkSettings = {
 		chain_id: "xian-testnet-2",
 		type: "testnet",
-		masternode_hosts: ["http://135.181.96.77:26657"]
+		masternode_hosts: ["https://testnet.xian.org"]
 	};
 
 	let tx_info: I_TxInfo = {
-		senderVk: wallet.vk,
+		senderVk: new_wallet.vk,
 		chain_id: network_info.chain_id,
 		contractName: "currency",
 		methodName: "approve",

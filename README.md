@@ -95,7 +95,7 @@ console.log(validSignature)
 ```
 
 ## Create a Xian Transaction
-Public Testnet masternode is `http://135.181.96.77:26657`
+Public Testnet masternode is `https://testnet.xian.org`
 
 ## Create a Xian Transaction
 Use Xian.TransactionBuilder(network_info, tx_info) to create a new Xian transaction.
@@ -105,9 +105,9 @@ create an object that describes the masternode/network that you are going to sen
 ```typescript
 
 let network_info: I_NetworkSettings = {
-    chain_id: "xian-testnet-1",
+    chain_id: "xian-testnet-2",
     type: "testnet", // or "mainnet"
-    masternode_hosts: ["http://135.181.96.77:26657"]
+    masternode_hosts: ["https://testnet.xian.org"]
 };
 ```
 

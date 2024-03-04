@@ -1,11 +1,11 @@
-import { MasternodeAPI } from "../src/lib/masternode-api";
-import { I_NetworkSettings } from "../src/types";
+import { TransactionBuilder, Wallet, MasternodeAPI } from "xian-js";
+import type { I_NetworkSettings } from "xian-js";
 
 async function main() {
 	let network_info: I_NetworkSettings = {
-		chain_id: "xian-testnet-1",
+		chain_id: "xian-testnet-2",
 		type: "testnet",
-		masternode_hosts: ["http://135.181.96.77:26657"]
+		masternode_hosts: ["https://testnet.xian.org"]
 	};
 
 	const masternode_api = new MasternodeAPI(network_info);
