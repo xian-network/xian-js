@@ -16,12 +16,8 @@
     "bignumber.js": "^9.0.0",
     "bip39": "^3.0.4",
     "buffer": "^6.0.3",
-    "install": "^0.13.0",
     "micro-ed25519-hdkey": "^0.1.2",
     "node-cryptojs-aes": "^0.4.0",
-    "node-fetch": "^2.6.1",
-    "npm": "^10.4.0",
-    "socket.io-client": "^4.6.1",
     "tweetnacl": "1.0.1"
   },
   "devDependencies": {
