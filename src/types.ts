@@ -96,3 +96,9 @@ export interface I_Transaction {
 }
 
 export type T_QueryResponseDataType = "str" | "int" | "decimal"
+
+export interface I_CreateWallet {
+	sk?: string;
+	keepPrivate?: boolean;
+	seed?: string;
+}

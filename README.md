@@ -42,6 +42,24 @@ console.log(new_wallet_bip39)
 
 ```
 
+### Create a wallet from sk (private key)
+
+```javascript
+const sk = 'a6b72cb3d1160c26f9f39a8f1d4a3c7c0da2ac59d193b66ac5f919ec77f28915'
+
+const wallet = Xian.Wallet.create_wallet({sk})
+
+console.log(wallet)
+
+>> {
+       sk: 'a6b72cb3d1160c26f9f39a8f1d4a3c7c0da2ac59d193b66ac5f919ec77f28915',
+       vk: '53d016586ce35c5f6ea581cadf4693dd2850621dfad6a2261e8dd311c83e11d5',
+       derivationIndex: 0,
+       seed: null,
+       mnemonic: null
+   }
+
+```
 ### Restore a  BIP39 / BIP 32 compatible wallet
 - **BIP39** = 24 word mnemonic
 - **BIP32** = derivation path
@@ -95,10 +113,9 @@ console.log(validSignature)
 ```
 
 ## Create a Xian Transaction
-Public Testnet masternode is `https://testnet.xian.org`
+Public Testnet masternode host is `https://testnet.xian.org`
 
-## Create a Xian Transaction
-Use Xian.TransactionBuilder(network_info, tx_info) to create a new Xian transaction.
+Use `Xian.TransactionBuilder(network_info, tx_info)` to create a new Xian transaction.
 
 ### Create network_info object
 create an object that describes the masternode/network that you are going to send the transcation to.

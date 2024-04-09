@@ -2,19 +2,12 @@ import * as helpers from "./helpers";
 import nacl from "tweetnacl";
 import * as bip39 from "bip39";
 import { HDKey } from 'micro-ed25519-hdkey';
+import { I_CreateWallet } from "../types";
 
-/**
- * Create a wallet object for signing and verifying messages
- *
- * @param {Object} [args={}] Args Object
- * @param {string} [args.sk=undefined] A 32 character long hex representation of a signing key (private key) to create wallet from
- * @param {Uint8Array(length: 32)} [args.seed=null] A Uint8Array with a length of 32 to seed the keyPair with. This is advanced behavior and should be avoided by everyday users
- * @param {boolean} [args.keepPrivate=false] No direct access to the sk. Will still allow the wallet to sign messages
- * @return {Object} Wallet Object with sign and verify methods
- */
-export let create_wallet = (args: any = {}) => {
+
+export let create_wallet = (args: I_CreateWallet = {}) => {
 	let { sk, keepPrivate, seed } = args;
-	let vk;
+	let vk: string;
 
 	if (sk) {
 		vk = get_vk(sk);
