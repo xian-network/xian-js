@@ -41,7 +41,6 @@ export class TransactionBuilder {
 				throw new Error(`arg[6] Nonce is required to be an Integer, type ${typeof txInfo.nonce} was given`);
 			this.nonce = txInfo.nonce;
 		}
-
 		this.sender = txInfo.senderVk;
 		this.masternodeApi = new MasternodeAPI(networkSettings);
 		this.contract = txInfo.contractName;
@@ -52,6 +51,7 @@ export class TransactionBuilder {
 		this.stampLimit = txInfo.stampLimit;
 		this.chain_id = networkSettings.chain_id;
 
+		this.nonce = txInfo.nonce !== undefined ? txInfo.nonce : undefined;  // user may set the nonce manually.
 		this.payload = {
 			sender: txInfo.senderVk,
 			contract: txInfo.contractName,
@@ -59,7 +59,7 @@ export class TransactionBuilder {
 			kwargs: txInfo.kwargs,
 			stamps_supplied: txInfo.stampLimit,
 			chain_id: txInfo.chain_id,
-			nonce: txInfo.nonce ? txInfo.nonce : undefined // user may set the nonce manually.
+			nonce: this.nonce
 		};
 
 		if (txData) {
@@ -84,6 +84,7 @@ export class TransactionBuilder {
 	}
 
 	public async send(sk: string): Promise<I_SendTxResult> {
+		console.log(this.payload)
 		try {
 			// If the user didn't supply a nonce, get one from a node.
 			if (!this.payload.nonce) {
