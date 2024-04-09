@@ -6,6 +6,7 @@ import * as Wallet from "./lib/wallet";
 import * as Utils from "./lib/helpers";
 import { Buffer } from "buffer";
 import { I_NetworkSettings, T_NetworkType, I_TxInfo, I_BroadcastTxResult, I_CheckTx, I_DeliverTx } from "./types";
+import { Network } from "./lib/network";
 
 globalThis.Buffer = Buffer;
 
@@ -15,7 +16,8 @@ export {
 	Wallet,
 	Keystore,
 	Encoder,
-	Utils
+	Utils,
+	Network,
 };
 
 export type {
@@ -33,5 +35,6 @@ export default {
 	Wallet,
 	Keystore,
 	Encoder,
-	Utils
+	Utils,
+	Network
 };

@@ -1,4 +1,3 @@
-import axios from "axios";
 import { decodeInt, decodeObj, decodeQuery, decodeStr, stringifyTransaction } from "./helpers";
 import { I_BroadcastTxResult, I_NetworkSettings, I_SendTxResult, I_Transaction } from "../types";
 import { Encoder } from "./encoder";
@@ -33,31 +32,61 @@ export class MasternodeAPI {
 	}
 
 	async getContractInfo(contractName: string) {
-		const { data } = await axios.post(`${this.host}/abci_query?path="/contract/${contractName}"`);
+		const response = await fetch(`${this.host}/abci_query?path="/contract/${contractName}"`, {
+			method: 'POST',
+			headers: {
+				'Content-Type': 'application/json',
+			},
+		});
+		const data = await response.json();
 		return decodeQuery(data.result.response);
 	}
 
 	async getVariable(contract: string, variable: string) {
 		let path = `/get/${contract}.${variable}/`;
 		const url = `${this.host}/abci_query?path="${path}"`;
-		const { data } = await axios.post(url);
+		const response = await fetch(url, {
+			method: 'POST',
+			headers: {
+				'Content-Type': 'application/json',
+			},
+		});
+		const data = await response.json();
 		const result = data.result.response;
 		let decoded = decodeQuery(result);
 		return decoded;
 	}
 
 	async getContractMethods(contractName) {
-		const { data } = await axios.post(`${this.host}/abci_query?path="/contract_methods/${contractName}"`);
+		const response = await fetch(`${this.host}/abci_query?path="/contract_methods/${contractName}"`, {
+			method: 'POST',
+			headers: {
+				'Content-Type': 'application/json',
+			},
+		});
+		const data = await response.json();
 		return JSON.parse(decodeQuery(data.result.response) as string);
 	}
 
 	async getContractVariables(contractName) {
-		const { data } = await axios.post(`${this.host}/abci_query?path="/contract_vars/${contractName}"`);
+		const response = await fetch(`${this.host}/abci_query?path="/contract_vars/${contractName}"`, {
+			method: 'POST',
+			headers: {
+				'Content-Type': 'application/json',
+			},
+		});
+		const data = await response.json();
 		return JSON.parse(decodeQuery(data.result.response) as string);
 	}
 
 	async pingServer() {
-		const { data } = await axios.post(`${this.host}/abci_query?path="/ping/"`);
+		const response = await fetch(`${this.host}/abci_query?path="/ping/"`, {
+			method: 'POST',
+			headers: {
+				'Content-Type': 'application/json',
+			},
+		});
+		const data = await response.json();
 		return JSON.parse(decodeQuery(data.result.response) as string);
 	}
 
@@ -77,7 +106,13 @@ export class MasternodeAPI {
 	async broadcastTx(tx: I_Transaction): Promise<I_SendTxResult> {
 		const txString = stringifyTransaction(tx);
 		const url = `${this.host}/broadcast_tx_commit?tx="${txString}"`;
-		const { data } = await axios.get(url);
+		const response = await fetch(url, {
+			method: 'GET',
+			headers: {
+				'Content-Type': 'application/json',
+			},
+		});
+		const data = await response.json();
 		const { check_tx, deliver_tx, hash } = data.result as I_BroadcastTxResult;
 		const result_data = deliver_tx.data ? decodeObj(deliver_tx.data) : null;
 		const check = check_tx.code === 0;
@@ -88,7 +123,13 @@ export class MasternodeAPI {
 	async getNonce(vk: string) {
 		const path = `/abci_query?path="/get_next_nonce/${vk}"`;
 		const url = `${this.host}${path}`;
-		const { data } = await axios.post(url);
+		const response = await fetch(url, {
+			method: 'POST',
+			headers: {
+				'Content-Type': 'application/json',
+			},
+		});
+		const data = await response.json();
 		const value = data.result.response.value;
 		if (value === "AA==") return 0;
 		const decoded = decodeInt(value);
@@ -96,14 +137,15 @@ export class MasternodeAPI {
 	}
 
 	getTransaction(hash: string) {
-		return axios.get(`${this.host}/tx?hash="0x${hash}"`);
+		return fetch(`${this.host}/tx?hash="0x${hash}"`).then(response => response.json());
 	}
 
 	getNodeInfo() {
-		return axios.get(`${this.host}/status`);
+		return fetch(`${this.host}/status`).then(response => response.json());
 	}
 
 	async getLastetBlock() {
-		return axios.get(`${this.host}/block`);
+		const response = await fetch(`${this.host}/block`);
+		return response.json();
 	}
 }

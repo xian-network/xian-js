@@ -13,20 +13,22 @@ export class TransactionBuilder {
 	nonce: number;
 	signature: string;
 	transactionSigned: boolean = false;
-	txSendResult: { errors: string[] } = { errors: [] };
+	txSendResult: { hash?: string; errors: string[] } = { errors: [] };
 	txBlockResult: object = {};
 	txHash: string;
 	chain_id: string;
+	resultInfo: any;
 	payload: I_Payload;
 	sortedPayload: I_PayloadSorted;
 	masternodeApi: MasternodeAPI;
 
-	constructor(networkSettings: I_NetworkSettings, txInfo: I_TxInfo) {
+	constructor(networkSettings: I_NetworkSettings, txInfo: I_TxInfo, txData?: any) {
 		/**
 		 * Validate Data
 		 */
 
 		if (typeof txInfo !== "object" || Object.keys(txInfo).length === 0) throw new Error(`txInfo object not found`);
+		if (typeof txInfo.chain_id !== "string") throw new Error(`chain_id must be provided (Type: String)`);
 		if (typeof txInfo.senderVk !== "string" || !/^[0-9a-fA-F]+$/.test(txInfo.senderVk))
 			throw new Error(`Sender Public Key Required (Type: Hex String)`);
 		if (typeof txInfo.contractName !== "string" || txInfo.contractName.trim() === "")
@@ -39,10 +41,6 @@ export class TransactionBuilder {
 				throw new Error(`arg[6] Nonce is required to be an Integer, type ${typeof txInfo.nonce} was given`);
 			this.nonce = txInfo.nonce;
 		}
-
-		/**
-		 * Define Variables
-		 */
 
 		this.sender = txInfo.senderVk;
 		this.masternodeApi = new MasternodeAPI(networkSettings);
@@ -63,10 +61,24 @@ export class TransactionBuilder {
 			chain_id: txInfo.chain_id,
 			nonce: txInfo.nonce ? txInfo.nonce : undefined // user may set the nonce manually.
 		};
+
+		if (txData) {
+			if (txData.uid) this.uid = txData.uid;
+			if (txData.txSendResult && typeof txData.txSendResult === "object" && Object.keys(txData.txSendResult).length > 0)
+				this.txSendResult = txData.txSendResult;
+			if (txData.txSendResult && typeof txData.txSendResult === "object" && Object.keys(txData.txSendResult).length > 0) {
+				this.txSendResult = txData.txSendResult;
+				if (this.txSendResult.hash) this.txHash = this.txSendResult.hash;
+			}
+			if (txData.txBlockResult && typeof txData.txBlockResult === "object" && Object.keys(txData.txBlockResult).length > 0)
+				this.txBlockResult = txData.txBlockResult;
+			if (txData.resultInfo && typeof txData.resultInfo === "object" && Object.keys(txData.resultInfo).length > 0)
+				this.resultInfo = txData.resultInfo;
+		}
 	}
 
 	private sign(sk: string, sortedPayload: I_PayloadSorted) {
-		const stringBuffer = Buffer.from(sortedPayload.jsonData);
+		const stringBuffer = Buffer.from(sortedPayload.json);
 		const stringArray = new Uint8Array(stringBuffer);
 		return wallet.sign(sk, stringArray);
 	}
@@ -91,5 +103,9 @@ export class TransactionBuilder {
 				error: e
 			};
 		}
+	}
+
+	public async getNonce(): Promise<number> {
+		return await this.masternodeApi.getNonce(this.sender);
 	}
 }

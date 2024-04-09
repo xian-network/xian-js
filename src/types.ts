@@ -85,7 +85,7 @@ export interface I_Payload {
 
 export interface I_PayloadSorted {
 	orderedPayload: I_Payload;
-	jsonData: string;
+	json: string;
 }
 
 export interface I_Transaction {

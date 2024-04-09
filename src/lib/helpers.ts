@@ -189,7 +189,7 @@ export function sortObject(object: I_Payload): I_PayloadSorted {
 	const orderedPayload = processObj(object) as I_Payload;
 	return {
 		orderedPayload: orderedPayload,
-		jsonData: JSON.stringify(orderedPayload)
+		json: JSON.stringify(orderedPayload)
 	};
 }
 
@@ -250,7 +250,7 @@ export function makeTransaction(signature: string, sortedPayload: I_PayloadSorte
 }
 
 export function verifySignature(payload: I_PayloadSorted, wallet, signature: string) {
-	const stringBuffer = Buffer.from(payload.jsonData);
+	const stringBuffer = Buffer.from(payload.json);
 	const stringArray = new Uint8Array(stringBuffer);
 	return wallet.verify(this.sender, stringArray, this.signature);
 }
