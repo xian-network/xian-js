@@ -10,7 +10,7 @@ async function main() {
 	console.log({ sk, vk });
 
 	let network_info: I_NetworkSettings = {
-		chain_id: "xian-testnet-2",
+		chain_id: "xian-testnet-1",
 		type: "testnet",
 		masternode_hosts: ["https://testnet.xian.org"]
 	};
@@ -19,7 +19,7 @@ async function main() {
 		senderVk: new_wallet.vk,
 		chain_id: network_info.chain_id,
 		contractName: "currency",
-		methodName: "approve",
+		methodName: "send",
 		kwargs: {
 			to: "burn",
 			amount: 1
