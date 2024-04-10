@@ -84,7 +84,6 @@ export class TransactionBuilder {
 	}
 
 	public async send(sk: string): Promise<I_SendTxResult> {
-		console.log(this.payload)
 		try {
 			// If the user didn't supply a nonce, get one from a node.
 			if (!this.payload.nonce) {
