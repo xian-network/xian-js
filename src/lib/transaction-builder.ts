@@ -84,17 +84,16 @@ export class TransactionBuilder {
 	}
 
 	public async send(sk: string): Promise<I_SendTxResult> {
-		try {
-			// If the user didn't supply a nonce, get one from a node.
-			if (!this.payload.nonce) {
-				this.payload.nonce = await this.masternodeApi.getNonce(this.sender);
-			}
-			this.sortedPayload = makePayload(this.payload);
-			// Sign the transaction
-			const signature = this.sign(sk, this.sortedPayload);
-			const tx = makeTransaction(signature, this.sortedPayload);
-			let result = await this.masternodeApi.broadcastTxAsync(tx);
-			return result;
+		// If the user didn't supply a nonce, get one from a node.
+		if (!this.payload.nonce) {
+			this.payload.nonce = await this.masternodeApi.getNonce(this.sender);
+		}
+		this.sortedPayload = makePayload(this.payload);
+		// Sign the transaction
+		const signature = this.sign(sk, this.sortedPayload);
+		const tx = makeTransaction(signature, this.sortedPayload);
+		let result = await this.masternodeApi.broadcastTxAsync(tx);
+		return result;
 	}
 
 	public async getNonce(): Promise<number> {
