@@ -24,7 +24,9 @@ export class MasternodeAPI {
 	}
 
 	get host() {
-		return this.hosts[Math.floor(Math.random() * this.hosts.length)];
+		const host = this.hosts[Math.floor(Math.random() * this.hosts.length)]
+		// console.log({host})
+		return host;
 	}
 
 	get url() {
@@ -104,8 +106,8 @@ export class MasternodeAPI {
 	}
 
 	async broadcastTx(tx: I_Transaction): Promise<I_SendTxResult> {
-		const txString = stringifyTransaction(tx);
-		const url = `${this.host}/broadcast_tx_commit?tx="${txString}"`;
+		const tx_string = stringifyTransaction(tx);
+		const url = `${this.host}/broadcast_tx_commit?tx="${tx_string}"`;
 		const response = await fetch(url, {
 			method: 'GET',
 			headers: {
@@ -113,11 +115,87 @@ export class MasternodeAPI {
 			},
 		});
 		const data = await response.json();
-		const { check_tx, deliver_tx, hash } = data.result as I_BroadcastTxResult;
-		const result_data = deliver_tx.data ? decodeObj(deliver_tx.data) : null;
+
+		// Catch RPC errors
+		if (data.error) {
+			return { success: false, error: data.error?.data || data.error };
+		}
+
+		const { check_tx, tx_result, hash } = data.result as I_BroadcastTxResult;
+
+		// Catch check_tx errors
+		const check_tx_ok = check_tx.code === 0;
+		if (!check_tx_ok) {
+			return { success: false, error: check_tx.log };
+		}
+
+		// Catch tx_result errors
+		const result_data = tx_result.data ? decodeObj(tx_result.data) : null;
 		const check = check_tx.code === 0;
-		const deliver = deliver_tx.code === 0;
+		const deliver = tx_result.code === 0;
+
 		return { success: check && deliver, data: result_data, hash };
+	}
+
+	async broadcastTxAsync(tx: I_Transaction): Promise<I_SendTxResult>{
+		const tx_string = stringifyTransaction(tx);
+		const url = `${this.host}/broadcast_tx_sync?tx="${tx_string}"`;
+		const response = await fetch(url, {
+			method: 'GET',
+			headers: {
+				'Content-Type': 'application/json',
+			},
+		});
+		const data = await response.json();
+
+		// Catch RPC errors
+		if (data.error) {
+			return { success: false, error: data.error?.data || data.error };
+		}
+
+		const check_tx_ok = data.result?.code === 0;
+		const hash = data.result?.hash;
+
+		// Catch check_tx errors
+		if (!check_tx_ok) {
+			return { success: false, error: data.result?.log };
+		}
+
+		// Retrieve TX result
+		const tx_result = await this.getTxResultAsync(hash);
+
+		// Catch tx_result errors
+		const result_data = tx_result.data ? decodeObj(tx_result.data) : null;
+		const deliver_tx_ok = tx_result.code === 0;
+		return { success: check_tx_ok && deliver_tx_ok, data: result_data, hash };
+	}
+
+	async getTxResultAsync(hash: string) {
+		let retries = 0;
+		let timeout = 1000;
+		while (retries < 5) {
+			try {
+				const { result } = await this.getTxResult(hash);
+				if (result.error) throw new Error(result.error.data);
+				return result?.tx_result;
+			} catch (e) {
+				await new Promise(resolve => setTimeout(resolve, timeout));
+				timeout *= 2; // exponential back-off
+				retries++;
+			}
+		}
+		return { code: 1, log: "Failed to get transaction result" };
+	}
+
+	async getTxResult(hash: string) {
+		const response = await fetch(`${this.host}/tx?hash=0x${hash}&prove=true`, {
+			method: 'GET',
+			headers: {
+				'Content-Type': 'application/json',
+			},
+		});
+		const data = await response.json();
+		return data
 	}
 
 	async getNonce(vk: string) {

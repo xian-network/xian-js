@@ -92,17 +92,9 @@ export class TransactionBuilder {
 			this.sortedPayload = makePayload(this.payload);
 			// Sign the transaction
 			const signature = this.sign(sk, this.sortedPayload);
-			//Serialize transaction
 			const tx = makeTransaction(signature, this.sortedPayload);
-			//Send transaction to the masternode
-			let response = await this.masternodeApi.broadcastTx(tx);
-			return response;
-		} catch (e) {
-			return {
-				success: false,
-				error: e
-			};
-		}
+			let result = await this.masternodeApi.broadcastTxAsync(tx);
+			return result;
 	}
 
 	public async getNonce(): Promise<number> {

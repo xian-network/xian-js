@@ -30,7 +30,7 @@ export interface I_TxInfo {
 
 export interface I_BroadcastTxResult {
 	check_tx: I_CheckTx;
-	deliver_tx: I_DeliverTx;
+	tx_result: I_DeliverTx;
 	hash: string;
 	height: string;
 }
