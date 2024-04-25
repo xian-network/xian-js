@@ -99,4 +99,15 @@ export class TransactionBuilder {
 	public async getNonce(): Promise<number> {
 		return await this.masternodeApi.getNonce(this.sender);
 	}
+
+	public async estimateStamps(sk: string): Promise<any> {
+		if (!this.payload.nonce) {
+			this.payload.nonce = await this.masternodeApi.getNonce(this.sender);
+		}
+		this.sortedPayload = makePayload(this.payload);
+		const signature = this.sign(sk, this.sortedPayload);
+		const tx = makeTransaction(signature, this.sortedPayload);
+
+		return await this.masternodeApi.estimateStamps(tx);
+	}
 }
