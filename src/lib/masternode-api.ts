@@ -25,7 +25,6 @@ export class MasternodeAPI {
 
 	get host() {
 		const host = this.hosts[Math.floor(Math.random() * this.hosts.length)]
-		// console.log({host})
 		return host;
 	}
 
@@ -180,7 +179,7 @@ export class MasternodeAPI {
 			},
 		});
 		const data = await response.json();
-		return decodeQuery(data.result.response);
+		return JSON.parse(decodeQuery(data.result.response) as string);
 	}
 
 	async getTxResultAsync(hash: string) {
