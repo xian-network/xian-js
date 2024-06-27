@@ -169,7 +169,7 @@ export class MasternodeAPI {
 		return { success: check_tx_ok && deliver_tx_ok, data: result_data, hash };
 	}
 
-	async estimateStamps(tx: I_Transaction) {
+	async simulateTxn(tx: I_Transaction) {
 		const tx_string = stringifyTransaction(tx);
 		const url = `${this.host}/abci_query?path="/estimate_stamps/${tx_string}"`;
 		const response = await fetch(url, {

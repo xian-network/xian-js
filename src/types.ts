@@ -4,7 +4,6 @@
 
 export interface I_NetworkSettings {
 	chain_id: string; // unique id of the chain
-	type: T_NetworkType; // testnet | mainnet
 	masternode_hosts: string[];
 }
 
@@ -20,7 +19,7 @@ export interface I_TxInfo {
 	contractName: string;
 	methodName: string;
 	kwargs: { [key: string]: any };
-	stampLimit: number;
+	stampLimit?: number;
 	nonce?: number;
 }
 

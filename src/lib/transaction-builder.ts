@@ -34,8 +34,6 @@ export class TransactionBuilder {
 		if (typeof txInfo.contractName !== "string" || txInfo.contractName.trim() === "")
 			throw new Error(`Contract Name Required (Type: String)`);
 		if (typeof txInfo.methodName !== "string" || txInfo.methodName.trim() === "") throw new Error(`Method Required (Type: String)`);
-		if (typeof txInfo.stampLimit !== "number" || !Number.isInteger(txInfo.stampLimit))
-			throw new Error(`Stamps Limit Required (Type: Integer)`);
 		if (txInfo.nonce) {
 			if (!Number.isInteger(txInfo.nonce))
 				throw new Error(`arg[6] Nonce is required to be an Integer, type ${typeof txInfo.nonce} was given`);
@@ -48,7 +46,6 @@ export class TransactionBuilder {
 		if (typeof txInfo.kwargs === "object") {
 			this.kwargs = txInfo.kwargs;
 		}
-		this.stampLimit = txInfo.stampLimit;
 		this.chain_id = networkSettings.chain_id;
 
 		this.nonce = txInfo.nonce !== undefined ? txInfo.nonce : undefined;  // user may set the nonce manually.
@@ -88,6 +85,11 @@ export class TransactionBuilder {
 		if (!this.payload.nonce) {
 			this.payload.nonce = await this.masternodeApi.getNonce(this.sender);
 		}
+		if (!this.payload.stamps_supplied) {
+			const simulate_txn_res = await this.simulate_txn(sk);
+			const { stamps_used } = simulate_txn_res;
+			this.payload.stamps_supplied = stamps_used;
+		}
 		this.sortedPayload = makePayload(this.payload);
 		// Sign the transaction
 		const signature = this.sign(sk, this.sortedPayload);
@@ -100,14 +102,16 @@ export class TransactionBuilder {
 		return await this.masternodeApi.getNonce(this.sender);
 	}
 
-	public async estimateStamps(sk: string): Promise<any> {
+	public async simulate_txn(sk: string): Promise<any> {
 		if (!this.payload.nonce) {
 			this.payload.nonce = await this.masternodeApi.getNonce(this.sender);
 		}
-		this.sortedPayload = makePayload(this.payload);
+		const payload_duplicate = Object.assign({}, this.payload);
+		payload_duplicate.stamps_supplied = 99999;
+		this.sortedPayload = makePayload(payload_duplicate);
 		const signature = this.sign(sk, this.sortedPayload);
 		const tx = makeTransaction(signature, this.sortedPayload);
 
-		return await this.masternodeApi.estimateStamps(tx);
+		return await this.masternodeApi.simulateTxn(tx);
 	}
 }

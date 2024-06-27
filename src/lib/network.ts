@@ -21,7 +21,6 @@ export class Network {
       throw new Error(`HOSTS Required (Type: Array)`);
 
     this.classname = 'Network'
-    this.type = networkInfoObj.type
     this.version = 1
     this.events = new EventEmitter();
     this.masternode_hosts = this.validateHosts(networkInfoObj.masternode_hosts);
