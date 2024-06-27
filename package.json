@@ -1,6 +1,6 @@
 {
   "name": "xian-js",
-  "version": "0.1.6",
+  "version": "0.1.7",
   "description": "javascript tools for interacting with the Xian blockchain.",
   "main": "./dist/index.js",
   "module": "./dist/index.mjs",
