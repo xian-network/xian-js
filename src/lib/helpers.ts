@@ -240,12 +240,12 @@ export function makePayload(payload_args: I_Payload) {
 	return sortObject(payload_args);
 }
 
-export function makeTransaction(signature: string, sortedPayload: I_PayloadSorted): I_Transaction {
+export function makeTransaction(signature: string, sortedPayload: I_PayloadSorted): any {
 	return {
 		metadata: {
 			signature: signature
 		},
-		payload: sortedPayload.orderedPayload
+		payload: sortedPayload.orderedPayload,
 	};
 }
 

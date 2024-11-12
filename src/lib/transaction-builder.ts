@@ -81,21 +81,28 @@ export class TransactionBuilder {
 	}
 
 	public async send(sk: string): Promise<I_SendTxResult> {
-		// If the user didn't supply a nonce, get one from a node.
-		if (!this.payload.nonce) {
-			this.payload.nonce = await this.masternodeApi.getNonce(this.sender);
+		try {
+			// If the user didn't supply a nonce, get one from a node.
+			if (!this.payload.nonce) {
+				this.payload.nonce = await this.masternodeApi.getNonce(this.sender);
+			}
+			if (!this.payload.stamps_supplied) {
+				const simulate_txn_res = await this.simulate_txn(sk);
+				const { stamps_used } = simulate_txn_res;
+				this.payload.stamps_supplied = stamps_used;
+			}
+			this.sortedPayload = makePayload(this.payload);
+			// Sign the transaction
+			const signature = this.sign(sk, this.sortedPayload);
+			const tx = makeTransaction(signature, this.sortedPayload);
+			console.log({ tx: JSON.stringify(tx) })
+			let result = await this.masternodeApi.broadcastTxAsync(tx);
+			return result;
 		}
-		if (!this.payload.stamps_supplied) {
-			const simulate_txn_res = await this.simulate_txn(sk);
-			const { stamps_used } = simulate_txn_res;
-			this.payload.stamps_supplied = stamps_used;
+		catch (error) {
+			console.log(error)
+			throw error;
 		}
-		this.sortedPayload = makePayload(this.payload);
-		// Sign the transaction
-		const signature = this.sign(sk, this.sortedPayload);
-		const tx = makeTransaction(signature, this.sortedPayload);
-		let result = await this.masternodeApi.broadcastTxAsync(tx);
-		return result;
 	}
 
 	public async getNonce(): Promise<number> {
@@ -103,15 +110,43 @@ export class TransactionBuilder {
 	}
 
 	public async simulate_txn(sk: string): Promise<any> {
-		if (!this.payload.nonce) {
-			this.payload.nonce = await this.masternodeApi.getNonce(this.sender);
+		try {
+			if (!this.payload.nonce) {
+				this.payload.nonce = await this.masternodeApi.getNonce(this.sender);
+			}
+			const payload_duplicate = Object.assign({}, this.payload);
+			payload_duplicate.stamps_supplied = 99999;
+			this.sortedPayload = makePayload(payload_duplicate);
+			const signature = this.sign(sk, this.sortedPayload);
+			const tx = makeTransaction(signature, this.sortedPayload);
+			
+			return await this.masternodeApi.simulateTxn(tx);
+		} catch (error) {
+			console.log(error)
+			throw error;
 		}
-		const payload_duplicate = Object.assign({}, this.payload);
-		payload_duplicate.stamps_supplied = 99999;
-		this.sortedPayload = makePayload(payload_duplicate);
-		const signature = this.sign(sk, this.sortedPayload);
-		const tx = makeTransaction(signature, this.sortedPayload);
-
-		return await this.masternodeApi.simulateTxn(tx);
 	}
+}
+
+function isValidMessage(input: string): boolean {
+	// Can only be a string, if it parses to JSON & contains any payload properties, reject
+	// If it doesn't parse to JSON, it's a valid message
+    const payloadProperties = ['chain_id', 'contract', 'function', 'kwargs', 'nonce', 'sender', 'stamps_supplied'];
+
+    if (typeof input === 'string') {
+        let parsedObject: any;
+        try {
+            parsedObject = JSON.parse(input);
+        } catch (error) {
+            return true; // Does not parse to JSON
+        }
+
+        for (const prop of payloadProperties) {
+            if (parsedObject.hasOwnProperty(prop)) {
+                return false; // Contains a payload property - reject
+            }
+        }
+    }
+
+    return false;
 }
