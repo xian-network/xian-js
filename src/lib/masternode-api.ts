@@ -137,7 +137,6 @@ export class MasternodeAPI {
 	}
 
 	async broadcastTxAsync(tx: I_Transaction): Promise<I_SendTxResult> {
-		console.log({ tx: JSON.stringify(tx) })
 		const tx_string = stringifyTransaction(tx);
 		const url = `${this.host}/broadcast_tx_sync?tx="${tx_string}"`;
 		const response = await fetch(url, {
@@ -171,9 +170,7 @@ export class MasternodeAPI {
 	}
 
 	async simulateTxn(tx: I_Transaction) {
-		console.log({ tx })
 		const tx_string = stringifyTransaction(tx);
-		console.log({ tx_string })
 		const url = `${this.host}/abci_query?path="/calculate_stamps/${tx_string}"`;
 		const response = await fetch(url, {
 			method: 'POST',
@@ -182,7 +179,6 @@ export class MasternodeAPI {
 			},
 		});
 		const data = await response.json();
-		console.log({ data: JSON.stringify(data) })
 		const decoded = decodeQuery(data.result.response)
 		return JSON.parse(decodeQuery(data.result.response) as string);
 	}
@@ -194,7 +190,6 @@ export class MasternodeAPI {
 			try {
 				const { result } = await this.getTxResult(hash);
 				if (result.error) throw new Error(result.error.data);
-				console.log({ result })
 				return result?.tx_result;
 			} catch (e) {
 				await new Promise(resolve => setTimeout(resolve, timeout));
