@@ -95,7 +95,6 @@ export class TransactionBuilder {
 			// Sign the transaction
 			const signature = this.sign(sk, this.sortedPayload);
 			const tx = makeTransaction(signature, this.sortedPayload);
-			console.log({ tx: JSON.stringify(tx) })
 			let result = await this.masternodeApi.broadcastTxAsync(tx);
 			return result;
 		}
