@@ -99,7 +99,6 @@ export class TransactionBuilder {
 			return result;
 		}
 		catch (error) {
-			console.log(error)
 			throw error;
 		}
 	}
@@ -121,7 +120,6 @@ export class TransactionBuilder {
 			
 			return await this.masternodeApi.simulateTxn(tx);
 		} catch (error) {
-			console.log(error)
 			throw error;
 		}
 	}
