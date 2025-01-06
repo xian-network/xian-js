@@ -1,161 +1,231 @@
 # xian-js
-## Tools for interacting with the Xian blockchain
 
-### Installation
+JavaScript/TypeScript SDK for interacting with the Xian blockchain network. This library provides comprehensive tools for wallet management, transaction handling, and smart contract interactions.
 
-`npm install xian-js`
+## Table of Contents
+- [Installation](#installation)
+- [Features](#features)
+- [Quick Start](#quick-start)
+- [Usage Guide](#usage-guide)
+  - [Wallet Management](#wallet-management)
+  - [Transaction Management](#transaction-management)
+  - [Network Interactions](#network-interactions)
+  - [Smart Contract Operations](#smart-contract-operations)
+  - [Blockchain Queries](#blockchain-queries)
 
-### Wallet Functions
+## Installation
 
-#### Create a Xian Keypair
+```bash
+npm install xian-js
+```
+
+## Features
+
+- Basic and HD wallet creation using BIP39/BIP32 standards
+- Secure keystore functionality for encrypted key storage
+- Transaction creation, simulation, and broadcasting
+- Support for both synchronous and asynchronous transaction submission
+- Smart contract deployment and interaction
+- Comprehensive blockchain querying capabilities
+- Network status monitoring and management
+- Advanced data encoding utilities for blockchain-specific types
+- Custom BigNumber handling for precise decimal operations
+- Message signing and verification utilities
+- Event emitting system for real-time updates
+- TypeScript support with full type definitions
+
+## Quick Start
 
 ```typescript
-import Xian from "xian-js"
+import { TransactionBuilder, Wallet } from "xian-js";
 
 // Create a new wallet
-const new_wallet = Xian.Wallet.new_wallet()
+const wallet = Wallet.create_wallet();
+console.log(`Public Key: ${wallet.vk}`);
 
-console.log(new_wallet)
-
->>  {
-        vk: "ea2cee33f9478d767d67afe345592ef36446ee04f8d588fa76942e6569a53298",
-        sk: "69a8db3fb7196debc2711fad1fa1935918d09f5d8900d84c3288ea5237611c03"
-    }
-```
-
-
-### Create a new BIP39 / BIP 32 compatible wallet
-- **BIP39** = 24 word mnemonic
-- **BIP32** = derivation path
-
-```javascript
-let new_wallet_bip39 = Xian.Wallet.new_wallet_bip39()
-
-console.log(new_wallet_bip39)
->> {
-       sk: 'a6b72cb3d1160c26f9f39a8f1d4a3c7c0da2ac59d193b66ac5f919ec77f28915',
-       vk: '53d016586ce35c5f6ea581cadf4693dd2850621dfad6a2261e8dd311c83e11d5',
-       derivationIndex: 0,
-       seed: '3626c59ee5bce833a8bf5024645eb10415b39c6f9fd0ff0fb1b00b8ca9fd6ff4b8a0ed7077296cdaff1b955f03318f244dfd3fead404d93f11a3f301c0e3e1c6',
-       mnemonic: 'evidence rifle behave normal duty mean junk chicken salute relief raw chunk region ocean guard swarm taste toy loop ozone spell crumble apart echo'
-   }
-
-```
-
-### Create a wallet from sk (private key)
-
-```javascript
-const sk = 'a6b72cb3d1160c26f9f39a8f1d4a3c7c0da2ac59d193b66ac5f919ec77f28915'
-
-const wallet = Xian.Wallet.create_wallet({sk})
-
-console.log(wallet)
-
->> {
-       sk: 'a6b72cb3d1160c26f9f39a8f1d4a3c7c0da2ac59d193b66ac5f919ec77f28915',
-       vk: '53d016586ce35c5f6ea581cadf4693dd2850621dfad6a2261e8dd311c83e11d5',
-       derivationIndex: 0,
-       seed: null,
-       mnemonic: null
-   }
-
-```
-### Restore a  BIP39 / BIP 32 compatible wallet
-- **BIP39** = 24 word mnemonic
-- **BIP32** = derivation path
-
-```javascript
-const seed = '3626c59ee5bce833a8bf5024645eb10415b39c6f9fd0ff0fb1b00b8ca9fd6ff4b8a0ed7077296cdaff1b955f03318f244dfd3fead404d93f11a3f301c0e3e1c6'
-const derivationIndex = 0;
-let wallet = Xian.Wallet.new_wallet_bip39(seed, derivationIndex)
-
-console.log(wallet)
->> {
-       sk: 'a6b72cb3d1160c26f9f39a8f1d4a3c7c0da2ac59d193b66ac5f919ec77f28915',
-       vk: '53d016586ce35c5f6ea581cadf4693dd2850621dfad6a2261e8dd311c83e11d5',
-       derivationIndex: 0,
-       seed: null,
-       mnemonic: null
-   }
-```
-
-
-### Get a public key (vk) from a private key (sk)
-Takes the sk as an argument and returns the vk
-```javascript
-let sk = "69a8db3fb7196debc2711fad1fa1935918d09f5d8900d84c3288ea5237611c03"
-let vk = wallet.get_vk(sk)
-
-console.log(vk)
->> 'ea2cee33f9478d767d67afe345592ef36446ee04f8d588fa76942e6569a53298'
-```
-
-### Sign a message
-Signs a string payload
-```javascript
-const stringBuffer = Buffer.from('message')
-let messageBytes = new Uint8Array(stringBuffer);
-let sk = "69a8db3fb7196debc2711fad1fa1935918d09f5d8900d84c3288ea5237611c03"
-
-let signedMessage = wallet.sign(sk, messageBytes)
-
-console.log(signedMessage)
->> '982c204fe88e620f3319558aa6b11f9d8be75b99b3199f434f5edf2834a9c52059ba4ea3d623ac1d550170e532e919c364aad1333f757f8f22e0355cb1dd8c09'
-```
-
-#### Verify signature
-verify a payload
-```javascript
-let validSignature = wallet.verify(vk, messageBytes, signedMessage)
-
-console.log(validSignature)
->> true
-```
-
-## Create a Xian Transaction
-Public Testnet masternode host is `https://testnet.xian.org`
-
-Use `Xian.TransactionBuilder(network_info, tx_info)` to create a new Xian transaction.
-
-### Create network_info object
-create an object that describes the masternode/network that you are going to send the transcation to.
-```typescript
-
-let network_info: I_NetworkSettings = {
-    chain_id: "xian-testnet-2",
-    type: "testnet", // or "mainnet"
+// Set up network information
+const network_info = {
+    chain_id: "xian-testnet-1",
     masternode_hosts: ["https://testnet.xian.org"]
 };
-```
 
-```typescript
-// Sender and Receiver public keys
-let senderVk = "ea2cee33f9478d767d67afe345592ef36446ee04f8d588fa76942e6569a53298"
-let receiverVk = "bb0fab41b9118f0afdabf3721fa9a6caae3c93845ed409d3118841065ad1a197"
-
-// Kwargs are the arugments you will send the contract method.  
-// For example the "currency" contract's "transfer" method needs two arguments to create a transfter; the person reciving the XIAN and the amount to transfer.  So we create a kwargs object like so.
-let kwargs = {
-        to: receiverVk,
-        amount: 1000
-}
-
-let txInfo: I_TxInfo = {
-    senderVk,
+// Create and send a transaction
+const tx_info = {
+    senderVk: wallet.vk,
+    chain_id: network_info.chain_id,
     contractName: "currency",
     methodName: "transfer",
-    kwargs,
-    stampLimit: 50000, // Max stamps to be used. Could use less, won't use more.
-}
+    kwargs: {
+        to: "recipient_address",
+        amount: 100
+    },
+    stampLimit: 50000
+};
+
+const transaction = new TransactionBuilder(network_info, tx_info);
+const result = await transaction.send(wallet.sk);
 ```
 
-### Create transaction
-```javascript
-let tx = new Xian.TransactionBuilder(networkInfo, txInfo)
-```
+## Usage Guide
 
-### Send transaction
+### Wallet Management
+
+#### Creating Wallets
+
 ```typescript
-let senderSk = "69a8db3fb7196debc2711fad1fa1935918d09f5d8900d84c3288ea5237611c03"
+import { Wallet } from "xian-js";
 
-const res = await tx.send(senderSk)
+// Create a new wallet
+const newWallet = Wallet.create_wallet();
+
+// Create from existing private key
+const existingWallet = Wallet.create_wallet({
+    sk: "your_private_key_here"
+});
+
+// Create BIP39 HD wallet
+const hdWallet = Wallet.new_wallet_bip39();
+console.log(`Mnemonic: ${hdWallet.mnemonic}`);
+```
+
+#### Message Signing and Verification
+
+```typescript
+// Sign a message
+const message = Buffer.from('Hello Xian');
+const signature = wallet.sign(wallet.sk, message);
+
+// Verify signature
+const isValid = wallet.verify(wallet.vk, message, signature);
+```
+
+### Transaction Management
+
+#### Basic Transaction
+
+```typescript
+const tx_info = {
+    senderVk: wallet.vk,
+    chain_id: network_info.chain_id,
+    contractName: "currency",
+    methodName: "transfer",
+    kwargs: {
+        to: "recipient_address",
+        amount: 100
+    }
+};
+
+const transaction = new TransactionBuilder(network_info, tx_info);
+const result = await transaction.send(wallet.sk);
+```
+
+#### Transaction Simulation
+
+```typescript
+// Simulate transaction to estimate stamps
+const simulation = await transaction.simulate_txn(wallet.sk);
+console.log(`Estimated stamps: ${simulation.stamps_used}`);
+```
+
+### Keystore Management
+
+The SDK provides secure key storage functionality:
+
+```typescript
+import { Keystore } from "xian-js";
+
+// Create a new keystore
+const keystore = new Keystore();
+
+// Add keys with metadata
+keystore.addKey({
+    sk: "private_key_here",
+    nickname: "Main Wallet",
+    name: "Trading Account",
+    network: "testnet"
+});
+
+// Encrypt keystore with password
+const encrypted = keystore.createKeystore("your_password", "optional_hint");
+
+// Load encrypted keystore
+const loadedKeystore = new Keystore({ keystoreData: encrypted });
+loadedKeystore.decryptKeystore("your_password");
+
+// Access wallets
+const wallets = loadedKeystore.wallets;
+```
+
+### Data Encoding
+
+The SDK includes utilities for handling blockchain-specific data types:
+
+```typescript
+import { Encoder } from "xian-js";
+
+// Handle blockchain numbers with precision
+const amount = Encoder("bigNumber", "123.456789");
+
+// Encode various data types
+const intValue = Encoder("int", 123);
+const floatValue = Encoder("float", 123.456);
+const dateValue = Encoder("datetime", new Date());
+const listValue = Encoder("list", [1, 2, 3]);
+```
+
+### Network Interactions
+
+```typescript
+import { Network } from "xian-js";
+
+const network = new Network({
+    chain_id: "xian-testnet-1",
+    masternode_hosts: ["https://testnet.xian.org"]
+});
+
+// Check network status
+const isOnline = await network.ping();
+
+// Get latest block
+const latestBlock = await network.getLastetBlock();
+```
+
+### Smart Contract Operations
+
+```typescript
+import { MasternodeAPI } from "xian-js";
+
+const api = new MasternodeAPI(network_info);
+
+// Get contract info
+const contractInfo = await api.getContractInfo("currency");
+
+// Get contract methods
+const methods = await api.getContractMethods("currency");
+
+// Query contract state
+const state = await api.getVariable("currency", "balances", address);
+```
+
+### Blockchain Queries
+
+```typescript
+// Get account balance
+const balance = await api.getCurrencyBalance(address);
+
+// Get transaction details
+const tx = await api.getTxResult(txHash);
+
+// Get contract variables
+const variables = await api.getContractVariables("currency");
+```
+
+## Events System
+
+The SDK includes an event emitter system for real-time updates:
+
+```typescript
+network.events.on("online", (status) => {
+    console.log(`Network status changed: ${status}`);
+});
+```
