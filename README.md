@@ -3,15 +3,24 @@
 JavaScript/TypeScript SDK for interacting with the Xian blockchain network. This library provides comprehensive tools for wallet management, transaction handling, and smart contract interactions.
 
 ## Table of Contents
-- [Installation](#installation)
-- [Features](#features)
-- [Quick Start](#quick-start)
-- [Usage Guide](#usage-guide)
-  - [Wallet Management](#wallet-management)
-  - [Transaction Management](#transaction-management)
-  - [Network Interactions](#network-interactions)
-  - [Smart Contract Operations](#smart-contract-operations)
-  - [Blockchain Queries](#blockchain-queries)
+- [xian-js](#xian-js)
+  - [Table of Contents](#table-of-contents)
+  - [Installation](#installation)
+  - [Features](#features)
+  - [Quick Start](#quick-start)
+  - [Usage Guide](#usage-guide)
+    - [Wallet Management](#wallet-management)
+      - [Creating Wallets](#creating-wallets)
+      - [Message Signing and Verification](#message-signing-and-verification)
+    - [Transaction Management](#transaction-management)
+      - [Basic Transaction](#basic-transaction)
+      - [Transaction Simulation](#transaction-simulation)
+    - [Keystore Management](#keystore-management)
+    - [Data Encoding](#data-encoding)
+    - [Network Interactions](#network-interactions)
+    - [Smart Contract Operations](#smart-contract-operations)
+    - [Blockchain Queries](#blockchain-queries)
+  - [Events System](#events-system)
 
 ## Installation
 

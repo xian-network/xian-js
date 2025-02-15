@@ -87,7 +87,7 @@ export class TransactionBuilder {
 				this.payload.nonce = await this.masternodeApi.getNonce(this.sender);
 			}
 			if (!this.payload.stamps_supplied) {
-				const simulate_txn_res = await this.simulate_txn(sk);
+				const simulate_txn_res = await this.simulate_txn();
 				const { stamps_used } = simulate_txn_res;
 				this.payload.stamps_supplied = stamps_used;
 			}
@@ -108,7 +108,7 @@ export class TransactionBuilder {
 		return await this.masternodeApi.getNonce(this.sender);
 	}
 
-	public async simulate_txn(sk: string): Promise<any> {
+	public async simulate_txn(): Promise<any> {
 		try {
 			if (!this.payload.nonce) {
 				this.payload.nonce = await this.masternodeApi.getNonce(this.sender);
@@ -116,36 +116,11 @@ export class TransactionBuilder {
 			const payload_duplicate = Object.assign({}, this.payload);
 			payload_duplicate.stamps_supplied = 99999;
 			this.sortedPayload = makePayload(payload_duplicate);
-			const signature = this.sign(sk, this.sortedPayload);
-			const tx = makeTransaction(signature, this.sortedPayload);
-			
+			const tx = makeTransaction('no_sig', this.sortedPayload);
 			return await this.masternodeApi.simulateTxn(tx);
 		} catch (error) {
 			console.log(error)
 			throw error;
 		}
 	}
-}
-
-function isValidMessage(input: string): boolean {
-	// Can only be a string, if it parses to JSON & contains any payload properties, reject
-	// If it doesn't parse to JSON, it's a valid message
-    const payloadProperties = ['chain_id', 'contract', 'function', 'kwargs', 'nonce', 'sender', 'stamps_supplied'];
-
-    if (typeof input === 'string') {
-        let parsedObject: any;
-        try {
-            parsedObject = JSON.parse(input);
-        } catch (error) {
-            return true; // Does not parse to JSON
-        }
-
-        for (const prop of payloadProperties) {
-            if (parsedObject.hasOwnProperty(prop)) {
-                return false; // Contains a payload property - reject
-            }
-        }
-    }
-
-    return false;
 }
